@@ -40,20 +40,7 @@ void Alphabet_Partitioning::build(string S, string alf){
     int n = S.length();
     int sigma_size = alf.length();
     // Definimos e inicializamos nuestro arreglo de caracteres y freciencias
-    /*map<pair<char,int>> F;
-    for(int i = 0; i < sigma_size; i++){
-        F.push_back(make_pair(alf[i], 0));
-    }
 
-    // TESTEO
-    for(int i = 0; i < sigma_size; i++){
-        std::cout << F[i].first << F[i].second << endl;
-    }
-    // TESTEO
-
-    for(int i = 0; i < n; i++){
-        std::cout << F[i].first << F[i].second << endl;
-    }*/
 }
 
 int main(){
