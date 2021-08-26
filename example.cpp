@@ -40,7 +40,7 @@ void Alphabet_Partitioning::build(string S, string alf){
     int n = S.length();
     int sigma_size = alf.length();
     // Definimos e inicializamos nuestro arreglo de caracteres y freciencias
-
+    // hola?
 }
 
 int main(){
