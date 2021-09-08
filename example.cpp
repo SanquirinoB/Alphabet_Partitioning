@@ -10,8 +10,13 @@ using namespace sdsl;
 
 // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles 
 // [32, 126] -> [0, 94]
-int translate(char c){
+const string alphabet = " !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+int to_int(char c){
     return c - ' ';
+}
+
+char to_char(int i){
+    return alphabet[i];
 }
 
 // TODO: Evaluar si se puede hacer mejor la definicion de clase. Porque usar template?
@@ -21,13 +26,9 @@ class Alphabet_Partitioning {
     const wt_huff_int<> K;
     // Arreglo de clases del alfabeto
     const wt_huff_int<> C;
-    
     public:
     // Constructor
-    void build(string S, string alf);
-    Alphabet_Partitioning(){
-        
-    }
+    Alphabet_Partitioning(string S);
 
     // Metodos de acceso primitivos
     string access(int i);
@@ -35,35 +36,47 @@ class Alphabet_Partitioning {
     int select(char c, int i);
 };
 
-void Alphabet_Partitioning::build(string S, string alf){
+Alphabet_Partitioning::Alphabet_Partitioning(string S)
+{
     // Identificamos el tamano del texto y alfabeto
     int n = S.length();
-    int sigma_size = alf.length();
+    int sigma_size = 95;
     // Definimos e inicializamos nuestro arreglo de caracteres y freciencias
-    /*map<pair<char,int>> F;
-    for(int i = 0; i < sigma_size; i++){
-        F.push_back(make_pair(alf[i], 0));
+    vector<pair<int, int>> F;
+    for(int i = 0; i < sigma_size; i++)
+    {
+        F.push_back(make_pair(0, i));
     }
-
-    // TESTEO
-    for(int i = 0; i < sigma_size; i++){
-        std::cout << F[i].first << F[i].second << endl;
+    // Para cada caracter en el alfabeto, computamos su frecuencia dentro de S
+    for(int i = 0; i < n; i++)
+    {
+        F[to_int(S[i])].first += 1;
     }
-    // TESTEO
+    // Ordenamos el alfabeto por frecuencia en orden descendente
+    sort(F.rbegin(), F.rend());
+    // Alocamos el arreglo con el id de las clases
+    string C[sigma_size];
+    // Almacenamos el tamanio de cada clase
+    int* N[int(log(sigma_size))];
+    int ln_sigma = floor(log(sigma_size));
 
-    for(int i = 0; i < n; i++){
-        std::cout << F[i].first << F[i].second << endl;
-    }*/
+    for(int l = 0; l < ln_sigma; l++)
+    {
+        N[l] = 0;
+    }
+    std::cout << sigma_size << ln_sigma << endl;
+    for(int i = 0; i < ln_sigma; i++){
+        std::cout << N[i] << ln_sigma << endl;
+    }
+    
+    
 }
 
 int main(){
     string exS = "to be or not to be, that is the question";
     string alf = "abehinoqrstu ,";
-    for(int i = 0; i < exS.length(); i++){
-        std::cout << translate(exS[i]) << endl;
-    }
+    const string alphabet = " !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
-    //Alphabet_Partitioning cosa;
-    // cosa.build(exS, alf);
+    Alphabet_Partitioning cosa(exS);
     return 0;
 }
