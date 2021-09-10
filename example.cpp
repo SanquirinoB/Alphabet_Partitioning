@@ -42,12 +42,12 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
     int n = S.length();
     int sigma_size = 95;
     // Definimos e inicializamos nuestro arreglo de caracteres y freciencias
-    vector<pair<int, int>> F;
-    for(int i = 0; i < sigma_size; i++) F.push_back(make_pair(0, i));
+    vector<pair<int, int>> *F = new vector<pair<int, int>>;
+    for(int i = 0; i < sigma_size; i++) (*F).push_back(make_pair(0, i));
     // Para cada caracter en el alfabeto, computamos su frecuencia dentro de S
-    for(int i = 0; i < n; i++) F[to_int(S[i])].first += 1;
+    for(int i = 0; i < n; i++) (*F)[to_int(S[i])].first += 1;
     // Ordenamos el alfabeto por frecuencia en orden descendente
-    sort(F.rbegin(), F.rend());
+    sort((*F).rbegin(), (*F).rend());
     // Alocamos el arreglo con el id de las clases
     char C[sigma_size];
     // Almacenamos el tamanio de cada clase
@@ -56,20 +56,25 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
 
     for(int l = 0; l < ln_sigma; l++) N[l] = 0;
     int l;
+
+    // TODO: Porque la clase 0 me queda con dos integrantes?
     for(int j = 1; j < sigma_size; j++)
     {
         l = floor(log(j));
-        C[to_int(F[j].second)] = to_char(l);
+        C[to_int((*F)[j].second)] = to_char(l);
         std::cout << "A la clase " << l << endl;
-        std::cout << "le agregamos la frecuencia " << F[j].first << endl;
-        std::cout << "del caracter " << to_char(F[j].second) << endl;
-        N[l] += F[j].first;
+        std::cout << "le agregamos la frecuencia " << (*F)[j].first << endl;
+        std::cout << "del caracter " << to_char((*F)[j].second) << endl;
+        N[l] += (*F)[j].first;
     }
 
     std::cout << sigma_size << ln_sigma << endl;
     for(int i = 0; i < ln_sigma; i++){
         std::cout << N[i] << i << endl;
     }
+    //wavelet
+    // Liberamos memoria
+    delete[]F;
     
     
 }
