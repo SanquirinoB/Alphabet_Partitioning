@@ -23,9 +23,9 @@ char to_char(int i){
 
 class Alphabet_Partitioning {
     // Transcripcion de S con la clase de los caracteres.
-    const wt_huff_int<> K;
+    const wt_huff_int<char> K;
     // Arreglo de clases del alfabeto
-    const wt_huff_int<> C;
+    const wt_huff_int<char> C;
     public:
     // Constructor
     Alphabet_Partitioning(string S);
@@ -49,7 +49,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
     // Ordenamos el alfabeto por frecuencia en orden descendente
     sort((*F).rbegin(), (*F).rend());
     // Alocamos el arreglo con el id de las clases
-    char C[sigma_size];
+    char valC[sigma_size];
     // Almacenamos el tamanio de cada clase
     int N[int(log(sigma_size))];
     int ln_sigma = floor(log(sigma_size));
@@ -61,20 +61,23 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
     for(int j = 1; j < sigma_size; j++)
     {
         l = floor(log(j));
-        C[to_int((*F)[j].second)] = to_char(l);
+        valC[to_int((*F)[j].second)] = to_char(l);
         std::cout << "A la clase " << l << endl;
         std::cout << "le agregamos la frecuencia " << (*F)[j].first << endl;
         std::cout << "del caracter " << to_char((*F)[j].second) << endl;
         N[l] += (*F)[j].first;
     }
+    // Liberamos memoria
+    delete[]F;
+    // Instanciamos C en formato de Wavelet Tree huffman shaped
+    construct(C, valC);
 
     std::cout << sigma_size << ln_sigma << endl;
     for(int i = 0; i < ln_sigma; i++){
         std::cout << N[i] << i << endl;
     }
     //wavelet
-    // Liberamos memoria
-    delete[]F;
+    
     
     
 }
