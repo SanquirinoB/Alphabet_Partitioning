@@ -94,8 +94,27 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
     // Instanciamos C en formato de Wavelet Tree huffman shaped
     construct(C, valC);
     
-
     char valK[n];
+    int *LClass[log2_sigma];
+
+    for (int l = 0; l < log2_sigma; l++)
+    {   
+        int NL[N[l]];
+        LClass[l] = NL;
+        N[l] = 0;
+    }
+    /*
+    Aqui hay un segmentation fault :c
+    for (int i = 1; i <= n; i ++)
+    {
+        l = C[S[i]];
+        valK[i] = to_char(l);
+        N[l] += l;
+        //LClass[N[l]] = &(C.rank(S[i]));
+    }
+    */
+
+
 
 
     //wavelet
