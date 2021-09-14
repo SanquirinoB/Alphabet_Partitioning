@@ -42,7 +42,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
     string S = " " + SRaw;
     int n = S.length() + 1;
     int sigma_size = 95;
-    int ln_sigma = floor(log(sigma_size));
+    int log2_sigma = floor(log2(sigma_size));
 
     // Definimos e inicializamos nuestro arreglo de caracteres y freciencias
     vector<pair<int, int>> *F = new vector<pair<int, int>>;
@@ -58,11 +58,11 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
     // Alocamos el arreglo con el id de las clases
     char valC[sigma_size + 1];
     // Inicializamos el tamanio de cada clase
-    int N[ln_sigma + 1];
-    for(int l = 1; l <= ln_sigma; l++) N[l] = 0;
+    int N[log2_sigma + 1];
+    for(int l = 1; l <= log2_sigma; l++) N[l] = 0;
 
     int l;
-    // TODO: Porque la clase 0 me queda con dos integrantes?
+
     for(int j = 1; j <= sigma_size; j++)
     {   
         l = floor(log(j));
