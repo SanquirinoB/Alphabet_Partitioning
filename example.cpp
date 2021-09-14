@@ -11,12 +11,31 @@ using namespace sdsl;
 // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles 
 // [32, 126] -> [1, 95]
 const string alphabet = " !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+/*
+Llevamos un int a su version char
+*/
 int to_int(char c){
     return c - ' ' + 1;
 }
-
+/*
+Llevamos un char a su version int
+*/
 char to_char(int i){
     return alphabet[i - 1];
+}
+/*
+Computamos el piso del logaritmo base 2 de un int
+notar que se computa en O(log(n))
+*/
+int floorLog2(int n)
+{   
+    int ans = -1;
+    while(n != 0)
+    {
+        n = n >> 1;
+        ans += 1;
+    }
+    return ans;
 }
 
 // TODO: Evaluar si se puede hacer mejor la definicion de clase. Porque usar template?
@@ -42,7 +61,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
     string S = " " + SRaw;
     int n = S.length() + 1;
     int sigma_size = 95;
-    int log2_sigma = floor(log2(sigma_size));
+    int log2_sigma = floorLog2(sigma_size);
 
     // Definimos e inicializamos nuestro arreglo de caracteres y freciencias
     vector<pair<int, int>> *F = new vector<pair<int, int>>;
@@ -71,9 +90,10 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
     }
 
     // Liberamos memoria
-    // Por algun motivo esta wea da segmentation fault delete[]F;
+    delete F;
     // Instanciamos C en formato de Wavelet Tree huffman shaped
-    //construct(C, valC);
+    construct(C, valC);
+    
 
     char valK[n];
 
@@ -84,11 +104,13 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
     
 }
 
+
+
 int main(){
     string exS = "to be or not to be, that is the question";
     string alf = "abehinoqrstu ,";
     const string alphabet = " !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
     Alphabet_Partitioning cosa(exS);
-    return 0;
+   return 0;
 }
