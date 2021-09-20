@@ -73,7 +73,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
     for(int i = 1; i <= n ; i++) (*F)[to_int(S[i])].first += 1;
     // Ordenamos el alfabeto por frecuencia en orden descendente
     sort((*F).rbegin(), (*F).rend());
-
+    
     // Alocamos el arreglo con el id de las clases
     char valC[sigma_size + 1];
     // Inicializamos el tamanio de cada clase
@@ -88,7 +88,6 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
         valC[to_int((*F)[j].second)] = to_char(l);
         N[l] += (*F)[j].first;
     }
-
     // Liberamos memoria
     delete F;
     // Instanciamos C en formato de Wavelet Tree huffman shaped
@@ -103,16 +102,19 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
         LClass[l] = NL;
         N[l] = 0;
     }
-    /*
-    Aqui hay un segmentation fault :c
+    //Aqui hay un segmentation fault :c
+    // Resulta que S deja de existir aqui, este es el segmentation fault
+    std::cout << S << endl;
+    
     for (int i = 1; i <= n; i ++)
-    {
-        l = C[S[i]];
-        valK[i] = to_char(l);
-        N[l] += l;
+    {   
+        std::cout << S << endl;
+        //l = C[to_int(S[i])];
+        //valK[i] = to_char(l);
+        //N[l] += l;
         //LClass[N[l]] = &(C.rank(S[i]));
     }
-    */
+
 
 
 
