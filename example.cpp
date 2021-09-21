@@ -59,7 +59,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
 {
     // Identificamos el tamano del texto y alfabeto
     string S = " " + SRaw;
-    int n = S.length() + 1;
+    int n = SRaw.length();
     int sigma_size = 95;
     int log2_sigma = floorLog2(sigma_size);
 
@@ -71,8 +71,9 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
 
     // Para cada caracter en el alfabeto, computamos su frecuencia dentro de S
     for(int i = 1; i <= n ; i++) (*F)[to_int(S[i])].first += 1;
+    
     // Ordenamos el alfabeto por frecuencia en orden descendente
-    sort((*F).rbegin(), (*F).rend());
+    sort((*F).rbegin(), (*F).rend()); // Ahora F indexa en 0 hasta 94
     
     // Alocamos el arreglo con el id de las clases
     char valC[sigma_size + 1];
@@ -81,55 +82,46 @@ Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
     for(int l = 1; l <= log2_sigma; l++) N[l] = 0;
 
     int l;
-
+    
     for(int j = 1; j <= sigma_size; j++)
     {   
-        l = floor(log(j));
-        valC[to_int((*F)[j].second)] = to_char(l);
-        N[l] += (*F)[j].first;
+        l = floorLog2(j);
+        valC[(*F)[j-1].second] = to_char(l);
+        N[l+1] += (*F)[j-1].first;
     }
+    
     // Liberamos memoria
     delete F;
+
     // Instanciamos C en formato de Wavelet Tree huffman shaped
     construct(C, valC);
     
     char valK[n];
-    int *LClass[log2_sigma];
+    int *LClass[log2_sigma+1];
 
-    for (int l = 0; l < log2_sigma; l++)
+    for (int l = 1; l <= log2_sigma; l++)
     {   
         int NL[N[l]];
         LClass[l] = NL;
         N[l] = 0;
     }
-    //Aqui hay un segmentation fault :c
-    // Resulta que S deja de existir aqui, este es el segmentation fault
-    std::cout << S << endl;
     
     for (int i = 1; i <= n; i ++)
     {   
-        std::cout << S << endl;
-        //l = C[to_int(S[i])];
+        std::cout << S[i] << i << endl;
+        l = C[to_int(S[i])];
+        // Aqui hay segmentation
         //valK[i] = to_char(l);
         //N[l] += l;
-        //LClass[N[l]] = &(C.rank(S[i]));
-    }
-
-
-
-
-
-    //wavelet
-    
-    
-    
+        //*LClass[N[l]] = int(C.rank(to_int(S[i]), l));
+    }   
 }
 
 
 
 int main(){
     string exS = "to be or not to be, that is the question";
-    string alf = "abehinoqrstu ,";
+
     const string alphabet = " !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
     Alphabet_Partitioning cosa(exS);
