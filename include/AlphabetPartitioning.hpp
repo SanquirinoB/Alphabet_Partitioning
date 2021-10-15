@@ -34,7 +34,8 @@ class Alphabet_Partitioning {
 
     public:
     // Constructor
-    Alphabet_Partitioning(string S);
+    // Alphabet_Partitioning(string S);
+    Alphabet_Partitioning(); 
     // TODO: Hacer buenas definiciones
     string access(int i);
     int rank(char c, int i);

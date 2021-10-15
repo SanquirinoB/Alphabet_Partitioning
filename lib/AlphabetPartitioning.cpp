@@ -1,9 +1,10 @@
-#include "AlphabetPartitioning.h"
+#include "AlphabetPartitioning.hpp"
 #include <iostream>
 #include <map>
 
-Alphabet_Partitioning::Alphabet_Partitioning(string SRaw)
+Alphabet_Partitioning::Alphabet_Partitioning()
 {   
+    string sRaw = "to be or not to be, that is the question";
     // Generamos variables de uso general
     //  Capturamos el tamanio del texto
     int n = SRaw.length();
