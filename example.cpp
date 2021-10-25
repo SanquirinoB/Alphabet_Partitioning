@@ -15,7 +15,7 @@ class Alphabet_Partitioning {
     // Arreglo de clases del alfabeto
     wt_huff_int<rrr_vector<63>> C;
     // Conjunto de L_l
-    vector<wt_gmr<rrr_vector<63>>> L;
+    vector<wt_gmr<>> L ;
 
     // Alfabeto a utilizar
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles 
@@ -36,7 +36,7 @@ class Alphabet_Partitioning {
     // Constructor
     Alphabet_Partitioning(string S);
     // TODO: Hacer buenas definiciones
-    string access(int i);
+    char access(int i);
     int rank(char c, int i);
     int select(char c, int i);
 };
@@ -138,13 +138,14 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
     construct_im(K, val_K, 8);
 
     // Procesamos cada L de cada clase a una estructura basada en permutaciones
-    // Por cada clase
+    // Generamos una lista auxiliar con cada L_l previamente computado
+    wt_gmr<>* aux_list = new wt_gmr<>[log2_sigma + 1];
+    // Por cada clase       
     for(l = 0; l < val_L.size(); l++)
-    {
-        std::cout << "Clase: " << l << endl;
-        std::cout << val_L[l] << endl;
+    {    
+        construct_im(aux_list[l], val_L[l], 8);
+        L.push_back(aux_list[l]);
     }
-
 }
 
 int Alphabet_Partitioning::to_int(char c){
@@ -165,6 +166,16 @@ int Alphabet_Partitioning::floor_log2(int n)
     }
     return ans;
 }
+
+char Alphabet_Partitioning::access(int i)
+{
+    int l = K[i];
+    int k = K.rank(i, l);
+    int m = L[l][k];
+    return to_char(C.select(m, l));
+}
+int Alphabet_Partitioning::rank(char c, int i);
+int Alphabet_Partitioning::select(char c, int i);
 
 int main(){
     string exS = "to be or not to be, that is the question";
