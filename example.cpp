@@ -36,9 +36,10 @@ class Alphabet_Partitioning {
     // Constructor
     Alphabet_Partitioning(string S);
     // TODO: Hacer buenas definiciones
-    char access(int i);
+    int_vector_size_type access(int i);
     int rank(char c, int i);
     int select(char c, int i);
+    wt_huff_int<rrr_vector<63>> get_C();
 };
 
 Alphabet_Partitioning::Alphabet_Partitioning(string S)
@@ -167,19 +168,43 @@ int Alphabet_Partitioning::floor_log2(int n)
     return ans;
 }
 
-char Alphabet_Partitioning::access(int i)
+wt_huff_int<rrr_vector<63>> Alphabet_Partitioning::get_C()
 {
-    int l = K[i];
-    int k = K.rank(i, l);
-    int m = L[l][k];
-    return to_char(C.select(m, l));
+    return C;
 }
-int Alphabet_Partitioning::rank(char c, int i);
-int Alphabet_Partitioning::select(char c, int i);
 
+int_vector_size_type Alphabet_Partitioning::access(int i)
+{
+    uint64_t l = K[i];
+    std::cout << "La clase es: " << l << endl;
+    int_vector_size_type k = K.rank(i, l);
+    std::cout << "Es la ocurrencia nro: " << k << endl;
+    int_vector_size_type m = L[l][k];
+    std::cout << "m es : " << m << endl;
+    std::cout << "Resultado: " << C.select(m, l) << endl;
+    return C.select(m, l);
+}
+int Alphabet_Partitioning::rank(char c, int i)
+{
+    return 1;
+}
+int Alphabet_Partitioning::select(char c, int i)
+{
+    return 1;
+}
 int main(){
     string exS = "to be or not to be, that is the question";
     Alphabet_Partitioning cosa(exS);
+    std::cout << cosa.access(10) << endl;
+    std::cout << cosa.get_C().select(2,2) << endl;
+
+    // for(int i = 1; i <= 95; i++){
+    //     std::cout << cosa.get_C()[i];
+    // }
+    // // write only one object to std::cout
+    // write_structure<HTML_FORMAT>(cosa.get_C(), cout);
+    // // write one object into a file
+    // write_structure<HTML_FORMAT>(cosa.get_C(), "csa_structure.html");
     
    return 0;
 }
