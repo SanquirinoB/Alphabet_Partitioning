@@ -17,6 +17,8 @@ class Alphabet_Partitioning {
     // Conjunto de L_l
     vector<wt_gmr<>> L ;
 
+    int* size_L;
+
     // Alfabeto a utilizar
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles 
     // [32, 126] -> [1, 95]
@@ -106,6 +108,9 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
     //  En cada elemento almacenamos un arreglo de int con la ocurrencia de caada caracter
     //  segun su clase
     vector<int_vector<64>> val_L;
+    std::cout << "N tiene" << endl;
+    for(int wea = 0 ; wea < log2_sigma + 1 ; wea++) std::cout << N[wea] << endl;
+    size_L = N;
 
     // Inicializacion de val_L
     //  Dentro del alfabeto [0, log2_sigma] (clases posibles)
@@ -113,7 +118,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
     {   
         // Asociamos el arreglo al arreglo de punteros val_L
         //      (!) Optimizacion levemente inutil, pero asi no guardamos referencia a clases vacias
-        val_L.push_back(int_vector<64>(N[l], 0));
+        val_L.push_back(int_vector<64>(N[l], 1));
         // Definimos el tamanio de la clase l como 0 (limpiamos)
         N[l] = 0;
     }
@@ -134,7 +139,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
         N[l] += 1;
         // Para el L de la clase l, accedemos al elemento de la clase en la que vamos
         // y renumeramos S[i] en el marco del alfabeto de la clase.
-        val_L[l][N[l]] = int(C.rank(to_int(S[i]), l));
+        val_L[l][N[l]] = int(C.rank(to_int(S[i]) + 1, l));
     }   
 
     // Inicializacion de K
@@ -179,10 +184,15 @@ wt_huff_int<rrr_vector<63>> Alphabet_Partitioning::get_C()
 
 char Alphabet_Partitioning::access(int i)
 {
+    std::cout << " ##### ACCESS #########" << endl;
     uint64_t l = K[i];
-    int_vector_size_type k = K.rank(i, l);
+    std::cout << l << endl;
+    int_vector_size_type k = K.rank(i+1, l);
+    std::cout << k << endl;
     int_vector_size_type m = L[l][k];
-    return to_char(C.select(m + 1, l));
+    std::cout << m << endl;
+    std::cout << " ##### ACCESS #########" << endl;
+    return to_char(C.select(m, l));
 }
 int Alphabet_Partitioning::rank(char c, int i)
 {
@@ -210,14 +220,18 @@ void Alphabet_Partitioning::show_structure()
         std::cout << C[i] << "|";
     }
     std::cout << endl;
-    std::cout << "El contenido de cada L es:" << endl;
-    for(int i = 0; i <= L.size(); i++){
-        std::cout << "  La clase: " << i << endl;
 
-        for(int j = 1; j <= 5; j++){
+    std::cout << "El cantidad de clases es: " << floor_log2(alphabet_size) << endl;
+    std::cout << "El contenido de cada L es:" << endl;
+    for(int i = 0; i <= 3; i++){
+        std::cout << "  La clase: " << i << endl;
+        std::cout << "      De tamanio: " << size_L[i] << endl;
+
+        for(int j = 1; j <= size_L[i]; j++){
             std::cout << "  " << " ";
             std::cout << L[i][j] << "|";
         }
+        std::cout << endl;
     }
     std::cout << endl;
 }
@@ -225,10 +239,18 @@ void Alphabet_Partitioning::show_structure()
 int main(){
     string exS = "tobeornottobethatisthequestion";
     Alphabet_Partitioning cosa(exS);
-    //cosa.show_structure();
+    // std::cout << cosa.access(13);
+    cosa.show_structure();
     for(int i = 1; i <= exS.length(); i++){
-        std::cout << cosa.access(i);
+        std::cout << cosa.access(i)<< "|" << endl;
     }
+    // string alphabet = "# !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+    // for(int i = 1; i <= alphabet.length() - 1; i++)
+    // {
+    //     std::cout << alphabet[i] - ' ' + 1 << alphabet[i];
+    //     std::cout << "::";
+    // }
+    
     // // write only one object to std::cout
     // write_structure<HTML_FORMAT>(cosa.get_C(), cout);
     // // write one object into a file
