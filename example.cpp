@@ -139,6 +139,10 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
         N[l] += 1;
         // Para el L de la clase l, accedemos al elemento de la clase en la que vamos
         // y renumeramos S[i] en el marco del alfabeto de la clase.
+        std::cout << "La letra " << S[i] << endl;
+        std::cout << "      Con clase " << l << endl;
+        std::cout << "      Se traduce dentro de L en " << int(C.rank(to_int(S[i]) + 1, l)) << endl;
+        std::cout << "      En la posición " << N[l] << endl;
         val_L[l][N[l]] = int(C.rank(to_int(S[i]) + 1, l));
     }   
 
@@ -223,7 +227,7 @@ void Alphabet_Partitioning::show_structure()
 
     std::cout << "El cantidad de clases es: " << floor_log2(alphabet_size) << endl;
     std::cout << "El contenido de cada L es:" << endl;
-    for(int i = 0; i <= 3; i++){
+    for(int i = 0; i <= floor_log2(alphabet_size); i++){
         std::cout << "  La clase: " << i << endl;
         std::cout << "      De tamanio: " << size_L[i] << endl;
 

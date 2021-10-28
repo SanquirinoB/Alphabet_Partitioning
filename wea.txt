@@ -6,6 +6,126 @@ N tiene
 0
 0
 0
+La letra t
+      Con clase 0
+      Se traduce dentro de L en 1
+      En la posición 1
+La letra o
+      Con clase 1
+      Se traduce dentro de L en 2
+      En la posición 1
+La letra b
+      Con clase 3
+      Se traduce dentro de L en 2
+      En la posición 1
+La letra e
+      Con clase 1
+      Se traduce dentro de L en 1
+      En la posición 2
+La letra o
+      Con clase 1
+      Se traduce dentro de L en 2
+      En la posición 3
+La letra r
+      Con clase 3
+      Se traduce dentro de L en 4
+      En la posición 2
+La letra n
+      Con clase 2
+      Se traduce dentro de L en 3
+      En la posición 1
+La letra o
+      Con clase 1
+      Se traduce dentro de L en 2
+      En la posición 4
+La letra t
+      Con clase 0
+      Se traduce dentro de L en 1
+      En la posición 2
+La letra t
+      Con clase 0
+      Se traduce dentro de L en 1
+      En la posición 3
+La letra o
+      Con clase 1
+      Se traduce dentro de L en 2
+      En la posición 5
+La letra b
+      Con clase 3
+      Se traduce dentro de L en 2
+      En la posición 3
+La letra e
+      Con clase 1
+      Se traduce dentro de L en 1
+      En la posición 6
+La letra t
+      Con clase 0
+      Se traduce dentro de L en 1
+      En la posición 4
+La letra h
+      Con clase 2
+      Se traduce dentro de L en 1
+      En la posición 2
+La letra a
+      Con clase 3
+      Se traduce dentro de L en 1
+      En la posición 4
+La letra t
+      Con clase 0
+      Se traduce dentro de L en 1
+      En la posición 5
+La letra i
+      Con clase 2
+      Se traduce dentro de L en 2
+      En la posición 3
+La letra s
+      Con clase 2
+      Se traduce dentro de L en 4
+      En la posición 4
+La letra t
+      Con clase 0
+      Se traduce dentro de L en 1
+      En la posición 6
+La letra h
+      Con clase 2
+      Se traduce dentro de L en 1
+      En la posición 5
+La letra e
+      Con clase 1
+      Se traduce dentro de L en 1
+      En la posición 7
+La letra q
+      Con clase 3
+      Se traduce dentro de L en 3
+      En la posición 5
+La letra u
+      Con clase 3
+      Se traduce dentro de L en 5
+      En la posición 6
+La letra e
+      Con clase 1
+      Se traduce dentro de L en 1
+      En la posición 8
+La letra s
+      Con clase 2
+      Se traduce dentro de L en 4
+      En la posición 6
+La letra t
+      Con clase 0
+      Se traduce dentro de L en 1
+      En la posición 7
+La letra i
+      Con clase 2
+      Se traduce dentro de L en 2
+      En la posición 7
+La letra o
+      Con clase 1
+      Se traduce dentro de L en 2
+      En la posición 9
+La letra n
+      Con clase 2
+      Se traduce dentro de L en 3
+      En la posición 8
 El contenido de K es:
 0|1|3|1|1|3|2|1|0|0|1|3|1|0|2|3|0|2|2|0|2|1|3|3|1|2|0|2|1|2|
 El contenido de C es:
@@ -25,6 +145,15 @@ El contenido de cada L es:
   La clase: 3
       De tamanio: 6
    1|   2|   4|   2|   1|   3|
+  La clase: 4
+      De tamanio: 0
+
+  La clase: 5
+      De tamanio: 0
+
+  La clase: 6
+      De tamanio: 0
+
 
  ##### ACCESS #########
 0
