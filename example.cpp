@@ -142,8 +142,8 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
         std::cout << "La letra " << S[i] << endl;
         std::cout << "      Con clase " << l << endl;
         std::cout << "      Se traduce dentro de L en " << int(C.rank(to_int(S[i]) + 1, l)) << endl;
-        std::cout << "      En la posición " << N[l] << endl;
-        val_L[l][N[l]] = int(C.rank(to_int(S[i]) + 1, l));
+        std::cout << "      En la posición " << N[l] - 1 << endl;
+        val_L[l][N[l] - 1] = int(C.rank(to_int(S[i]) + 1, l));
     }   
 
     // Inicializacion de K
@@ -188,14 +188,9 @@ wt_huff_int<rrr_vector<63>> Alphabet_Partitioning::get_C()
 
 char Alphabet_Partitioning::access(int i)
 {
-    std::cout << " ##### ACCESS #########" << endl;
     uint64_t l = K[i];
-    std::cout << l << endl;
     int_vector_size_type k = K.rank(i+1, l);
-    std::cout << k << endl;
     int_vector_size_type m = L[l][k];
-    std::cout << m << endl;
-    std::cout << " ##### ACCESS #########" << endl;
     return to_char(C.select(m, l));
 }
 int Alphabet_Partitioning::rank(char c, int i)
@@ -246,19 +241,9 @@ int main(){
     // std::cout << cosa.access(13);
     cosa.show_structure();
     for(int i = 1; i <= exS.length(); i++){
-        std::cout << cosa.access(i)<< "|" << endl;
+        std::cout << cosa.access(i);
     }
-    // string alphabet = "# !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-    // for(int i = 1; i <= alphabet.length() - 1; i++)
-    // {
-    //     std::cout << alphabet[i] - ' ' + 1 << alphabet[i];
-    //     std::cout << "::";
-    // }
-    
-    // // write only one object to std::cout
-    // write_structure<HTML_FORMAT>(cosa.get_C(), cout);
-    // // write one object into a file
-    // write_structure<HTML_FORMAT>(cosa.get_C(), "csa_structure.html");
+    std::cout << endl;
     
    return 0;
 }
