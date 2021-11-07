@@ -139,10 +139,10 @@ Alphabet_Partitioning::Alphabet_Partitioning(string S)
         N[l] += 1;
         // Para el L de la clase l, accedemos al elemento de la clase en la que vamos
         // y renumeramos S[i] en el marco del alfabeto de la clase.
-        std::cout << "La letra " << S[i] << endl;
-        std::cout << "      Con clase " << l << endl;
-        std::cout << "      Se traduce dentro de L en " << int(C.rank(to_int(S[i]) + 1, l)) << endl;
-        std::cout << "      En la posición " << N[l] - 1 << endl;
+        // std::cout << "La letra " << S[i] << endl;
+        // std::cout << "      Con clase " << l << endl;
+        // std::cout << "      Se traduce dentro de L en " << int(C.rank(to_int(S[i]) + 1, l)) << endl;
+        // std::cout << "      En la posición " << N[l] - 1 << endl;
         val_L[l][N[l] - 1] = int(C.rank(to_int(S[i]) + 1, l));
     }   
 
@@ -195,11 +195,17 @@ char Alphabet_Partitioning::access(int i)
 }
 int Alphabet_Partitioning::rank(char c, int i)
 {
-    return 1;
+    uint64_t l = C[to_int(c)];
+    uint64_t m = C.rank(to_int(c) + 1, l);
+    uint64_t k = K.rank(i + 1, l);
+    return L[l].rank(k + 1, m);
 }
 int Alphabet_Partitioning::select(char c, int i)
 {
-    return 1;
+    uint64_t l = C[to_int(c)];
+    uint64_t m = C.rank(to_int(c) + 1, l);
+    uint64_t k = L[l].select(i, m);
+    return K.select(k, l);
 }
 
 void Alphabet_Partitioning::show_structure()
@@ -240,10 +246,27 @@ int main(){
     Alphabet_Partitioning cosa(exS);
     // std::cout << cosa.access(13);
     cosa.show_structure();
+
+    // Access test
     for(int i = 1; i <= exS.length(); i++){
         std::cout << cosa.access(i);
     }
-    std::cout << endl;
+    std::cout << endl; // tobeornottobethatisthequestion
+
+    // Rank Test
+    std::cout << cosa.rank('t', 5) << endl; // 1
+    std::cout << cosa.rank('o', 5) << endl; // 2
+    std::cout << cosa.rank('b', 5) << endl; // 1
+    std::cout << cosa.rank('e', 5) << endl; // 1
+
+    // Select Test
+    std::cout << cosa.select('t', 2) << endl; // 9
+    std::cout << cosa.select('o', 2) << endl; // 5
+    std::cout << cosa.select('b', 2) << endl; // 12
+    std::cout << cosa.select('e', 2) << endl; // 13
+
+
+
     
    return 0;
 }
