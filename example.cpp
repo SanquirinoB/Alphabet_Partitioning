@@ -63,7 +63,6 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
 {   
     // Analiza el alfabeto entregado, actualizando alphabet_size y alphabet_buffer_size
     Identify_alphabet(custom_alphabet_path);
-    cout << alphabet_size << endl;
     // pair<uint64_t, uint64_t*> size_and_text = text_to_int(text_path, custom_alphabet_path);
     // // Generamos variables de uso general
     // alphabet_path = custom_alphabet_path;
@@ -184,13 +183,14 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
 
 void Alphabet_Partitioning::Identify_alphabet(string alph_path){
     alphabet_size = 0;
-    int counter = 0;
     string line;
+    int buffer = 0;
     alphabet_access.open(alph_path);
-    // TOD: manejo de error en casao de no abrirse
+    // TODO: manejo de error en casao de no abrirse
     while(getline(alphabet_access, line))
     {
-        alphabet_word_buffer.push_back(line.size());
+        buffer += line.size() + 1;
+        alphabet_word_buffer.push_back(buffer);
         alphabet_size++;
     }
     alphabet_access.close();
@@ -277,7 +277,7 @@ void Alphabet_Partitioning::show_structure()
 }
 
 int main(){
-    string alphabet_path_ex = "alphabets/default.txt";
+    string alphabet_path_ex = "alphabets/word_test.txt";
     string text_path_ex = "text/example_text.txt";
     Alphabet_Partitioning cosa(text_path_ex, alphabet_path_ex);
 
