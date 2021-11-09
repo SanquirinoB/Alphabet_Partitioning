@@ -1,1 +1,12 @@
-8
+Alphabet size: 8(!) Busco la palabra: to
+10|3
+ rôÿ
+22|5
+ rôÿ
+27|6
+ rôÿ
+31|7
+ rôÿ
+(!) Error: Palabra no encontrada. Por favor verifique que el alfabeto contenga todas las palabras posibles
+       (?) Palabra desconocida: to
+18446744073709551615
