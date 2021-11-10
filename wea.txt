@@ -1,4 +1,7 @@
-(!) Busco la palabra: to
-10|0|7|3
-Lei : or3|0|2|1
-Lei : is18446744073709551615
+8
+3
+1
+4
+(!) Error: Palabra no encontrada. Por favor verifique que el alfabeto contenga todas las palabras posibles
+       (?) Palabra desconocida: wea
+0
