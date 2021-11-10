@@ -21,11 +21,10 @@ class Alphabet_Partitioning {
     // Alfabeto a utilizar
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles 
     // [32, 126] -> [1, 95]
-    string alphabet_path;
+    string alphabet_path = "alphabets/default.txt";
     vector<int> alphabet_word_reference;
     ifstream alphabet_access;
     uint64_t alphabet_size;
-    char* alphabet_buffer;
     uint64_t text_size;
 
     protected:
@@ -184,51 +183,64 @@ void Alphabet_Partitioning::Identify_alphabet(string alph_path){
     alphabet_size = 0;
     string line;
     int buffer = 0;
-    int max_size_buffer = 0;
     alphabet_access.open(alph_path);
+    alphabet_path = alph_path;
+
     // TODO: manejo de error en casao de no abrirse
     while(getline(alphabet_access, line))
     {
-        if(line.size() > max_size_buffer) max_size_buffer = line.size();
         alphabet_word_reference.push_back(buffer);
         buffer += line.size() + 1;
         alphabet_size++;
     }
+
     alphabet_word_reference.push_back(buffer);
     alphabet_access.close();
-    alphabet_buffer = new char[max_size_buffer];
+
 }
 
 uint64_t Alphabet_Partitioning::BS_over_alphabet(string word){
     uint64_t first = 0;
     uint64_t last = alphabet_size - 1;
     uint64_t middle = floor((first + last)/2);
-    cout << "Alphabet size: " << alphabet_size;
-
     string line;
-    alphabet_access.open(alphabet_path);
+
+    alphabet_access.open(alphabet_path, ifstream::in);
+
+    if(!alphabet_access.is_open()){
+        cout << "WEAAAA" << endl;
+        return -1;
+    }
+
     cout << "(!) Busco la palabra: "<< word << endl;
 
-    while(first <= last){
+    while(first < last){
         cout << alphabet_word_reference[middle] << "|";
+        cout << first << "|";
+        cout << last << "|";
         cout << middle << endl;
-        alphabet_access.seekg(alphabet_word_reference[middle], alphabet_access.beg);
-        // CREO QUE AQUI ES DONDE LA COSA LEE MAL, OBSERVAR WEA.TXT
-        alphabet_access.read(alphabet_buffer, alphabet_word_reference[middle + 1] - alphabet_word_reference[middle]);
-        cout << alphabet_buffer << endl;
-        if(std::string(line) < word){
+
+        alphabet_access.seekg(alphabet_word_reference[middle]);
+        getline(alphabet_access, line);
+        printf("Lei : %s", line.c_str());
+
+        if(line > word){
             first = middle + 1;
         } else if (line == word){
             return middle;
         } else {
             last = middle - 1;
         }
+
         middle = floor((first + last)/2);
+
     }
+
     if(first > last) {
         cout << "(!) Error: Palabra no encontrada. Por favor verifique que el alfabeto contenga todas las palabras posibles" << endl;
         cout << "       (?) Palabra desconocida: " << word << endl;
     }
+
     return -1;
 }
 
@@ -312,7 +324,11 @@ int main(){
     // cout << cosa.BS_over_alphabet("be") << endl;
     // cout << cosa.BS_over_alphabet("or") << endl;
     // cout << cosa.BS_over_alphabet("wea") << endl;
-    
+    // string wea = "abc";
+    // string weaa = "a";
+    // string weaaa = "b";
+    // cout << (wea < weaa) << endl;
+    // cout << (weaa < weaaa) << endl;
     
 }
 
