@@ -22,10 +22,12 @@ class Alphabet_Partitioning {
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles 
     // [32, 126] -> [1, 95]
     string alphabet_path = "alphabets/default.txt";
+    string tmp_text_path = "tmp/tmp_text.txt";
     vector<uint64_t> alphabet_word_reference;
     ifstream alphabet_access;
     uint64_t alphabet_size;
     uint64_t text_size;
+    char delimiter = '/';
 
     protected:
     // Con esta funcion transformaremos los caracteres a su valor int, minimo = 1
@@ -36,7 +38,7 @@ class Alphabet_Partitioning {
     // Nolotar que se computa en O(log(n))
     uint64_t floor_log2(uint64_t n);
 
-    pair<uint64_t, uint64_t*> text_to_int(string text_path, string alph_path);
+    void text_to_int(string text_path, string alph_path);
     void Identify_alphabet(string alphabet_path);
 
     public:
@@ -63,122 +65,127 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
 {   
     // Analiza el alfabeto entregado, actualizando alphabet_size y alphabet_buffer_size
     Identify_alphabet(custom_alphabet_path);
-    // pair<uint64_t, uint64_t*> size_and_text = text_to_int(text_path, custom_alphabet_path);
-    // // Generamos variables de uso general
-    // alphabet_path = custom_alphabet_path;
-    // alphabet_access.open(alphabet_path, ios::in);
-    // // TODO: Programar error de apertura de alphabet
-    // if (!alphabet_access) return;
-    // //  Capturamos el tamanio del texto
-    // text_size = size_and_text.first;
-    // uint64_t* text = size_and_text.second;
-    // //  Computamos el logaritmo base 2 del tamanio del alfabeto
-    // uint64_t log2_sigma = floor_log2(alphabet_size);
+    text_to_int(text_path, custom_alphabet_path);
 
-    // // Definicion de F
-    // //  Definimos  nuestro vector de pares [(int) frecuencia, (int) caracter]
-    // vector<pair<uint64_t, uint64_t>> *F = new vector<pair<uint64_t, uint64_t>>;
+    // Generamos variables de uso general
+    alphabet_access.open(alphabet_path, ios::in);
 
-    // // Inicialicion de F
-    // //  Incluimos los 95 caracteres con frecuencia 0
-    // //   (!) Notar que hora F indexa en 0 hasta 94.
-    // for(uint64_t i = 1; i <= alphabet_size; i++) (*F).push_back(make_pair(0, i));
-    // //  Para cada caracter en el texto, sumamos 1 a su frecuencia respectiva
-    // for(uint64_t i = 0; i < text_size ; i++) (*F)[text[i] - 1].first += 1;
-    // //  Ordenamos el alfabeto por frecuencia en orden descendente
-    // sort((*F).rbegin(), (*F).rend()); 
+    //  Computamos el logaritmo base 2 del tamanio del alfabeto
+    uint64_t log2_sigma = floor_log2(alphabet_size);
+
+    // Definicion de F
+    //  Definimos  nuestro vector de pares [(int) frecuencia, (int) caracter]
+    vector<pair<uint64_t, uint64_t>> *F = new vector<pair<uint64_t, uint64_t>>;
+
+    // Inicialicion de F
+    //  Incluimos los 95 caracteres con frecuencia 0
+    //   (!) Notar que hora F indexa en 0 hasta 94.
+    for(uint64_t i = 1; i <= alphabet_size; i++) (*F).push_back(make_pair(0, i));
+    // Accedemos a la version temporal del texto
+    ifstream text;
+    string word;
+    text.open(tmp_text_path, ios::in);
+    //  Para cada caracter en el texto, sumamos 1 a su frecuencia respectiva
+    while(getline(text, word, delimiter)) (*F)[stoul(word) - 1].first += 1;
+    //  Ordenamos el alfabeto por frecuencia en orden descendente
+    sort((*F).rbegin(), (*F).rend()); 
     
-    // // Definicion de N
-    // //  Arreglo de enteros, del tamanio del logaritmo base 2 del tamanio del alfabeto
-    // uint64_t N[log2_sigma + 1];
+    // Definicion de N
+    //  Arreglo de enteros, del tamanio del logaritmo base 2 del tamanio del alfabeto
+    uint64_t N[log2_sigma + 1];
 
-    // // Inicializacion de N
-    // //  Se setean todos sus valores a 0
-    // for(uint64_t l = 0; l <= log2_sigma; l++) N[l] = 0;
+    // Inicializacion de N
+    //  Se setean todos sus valores a 0
+    for(uint64_t l = 0; l <= log2_sigma; l++) N[l] = 0;
 
-    // // Definicion de val_C
-    // //  Vector de enteros, del tamanio del alfabeto.
-    // int_vector<64> val_C(alphabet_size, 0);
-    // //  Generamos una variable auxiliar para almacenar la clase de un caracter
-    // uint64_t l;
+    // Definicion de val_C
+    //  Vector de enteros, del tamanio del alfabeto.
+    int_vector<64> val_C(alphabet_size, 0);
+    //  Generamos una variable auxiliar para almacenar la clase de un caracter
+    uint64_t l;
     
-    // // Inicializacion de val_C
-    // //  Por cada elemento del alfabeto de C [1, log(sigma)]
-    // for(uint64_t j = 1; j <= alphabet_size; j++)
-    // {   
-    //     // Computamos su clase (l)
-    //     l = floor_log2(j);
-    //     // Para su posicion en val_C, le asignamos su clase (puede haber error aqui)
-    //     val_C[(*F)[j-1].second - 1] = l;
-    //     // Incrementamos el tamanio de la clase l en la frecuencia del caracter asociado
-    //     N[l] += (*F)[j-1].first;
-    // }
+    // Inicializacion de val_C
+    //  Por cada elemento del alfabeto de C [1, log(sigma)]
+    for(uint64_t j = 1; j <= alphabet_size; j++)
+    {   
+        // Computamos su clase (l)
+        l = floor_log2(j);
+        // Para su posicion en val_C, le asignamos su clase (puede haber error aqui)
+        val_C[(*F)[j-1].second - 1] = l;
+        // Incrementamos el tamanio de la clase l en la frecuencia del caracter asociado
+        N[l] += (*F)[j-1].first;
+    }
     
-    // // Eliminacion de F
-    // delete F;
+    // Eliminacion de F
+    delete F;
 
-    // // Inicializacion de C
-    // // A partir de val_C, generamos C en formato de Wavelet Tree huffman shaped
-    // //      (!) Indexa en 1
-    // construct_im(C, val_C, 8);
+    // Inicializacion de C
+    // A partir de val_C, generamos C en formato de Wavelet Tree huffman shaped
+    //      (!) Indexa en 1
+    construct_im(C, val_C, 8);
     
-    // // Definicion de val_L
-    // //  Arreglo de punteros, del tamanio del logaritmo base 2 del tamanio del alfabeto
-    // //  En cada elemento almacenamos un arreglo de int con la ocurrencia de caada caracter
-    // //  segun su clase
-    // vector<int_vector<64>> val_L;
-    // std::cout << "N tiene" << endl;
-    // for(int wea = 0 ; wea < log2_sigma + 1 ; wea++) std::cout << N[wea] << endl;
-    // size_L = N;
+    // Definicion de val_L
+    //  Arreglo de punteros, del tamanio del logaritmo base 2 del tamanio del alfabeto
+    //  En cada elemento almacenamos un arreglo de int con la ocurrencia de caada caracter
+    //  segun su clase
+    vector<int_vector<64>> val_L;
+    std::cout << "N tiene" << endl;
+    for(int wea = 0 ; wea < log2_sigma + 1 ; wea++) std::cout << N[wea] << endl;
+    size_L = N;
 
-    // // Inicializacion de val_L
-    // //  Dentro del alfabeto [0, log2_sigma] (clases posibles)
-    // for (uint64_t l = 0; l <= log2_sigma; l++)
-    // {   
-    //     // Asociamos el arreglo al arreglo de punteros val_L
-    //     //      (!) Optimizacion levemente inutil, pero asi no guardamos referencia a clases vacias
-    //     val_L.push_back(int_vector<64>(N[l], 1));
-    //     // Definimos el tamanio de la clase l como 0 (limpiamos)
-    //     N[l] = 0;
-    // }
+    // Inicializacion de val_L
+    //  Dentro del alfabeto [0, log2_sigma] (clases posibles)
+    for (uint64_t l = 0; l <= log2_sigma; l++)
+    {   
+        // Asociamos el arreglo al arreglo de punteros val_L
+        //      (!) Optimizacion levemente inutil, pero asi no guardamos referencia a clases vacias
+        val_L.push_back(int_vector<64>(N[l], 1));
+        // Definimos el tamanio de la clase l como 0 (limpiamos)
+        N[l] = 0;
+    }
     
-    // // Deficion val_K
-    // //  AVector de int, de tamanio equivalente al texto, almacena el equivalente de S en formato de clases
-    // int_vector<64> val_K(text_size, 0);
+    // Deficion val_K
+    //  AVector de int, de tamanio equivalente al texto, almacena el equivalente de S en formato de clases
+    int_vector<64> val_K(text_size, 0);
 
-    // // Inicializacion de val_K
-    // //  Por cada caracter en el texto
-    // for (uint64_t i = 0; i < text_size; i ++)
-    // {   
-    //     // Del texto, para la letra text[i] recuperamos su clase
-    //     l = C[text[i]];
-    //     // Reescribimos text[i] como la clase de i
-    //     val_K[i] = l;
-    //     // Avanzamos en el elemento de la clase l leido
-    //     N[l] += 1;
-    //     // Para el L de la clase l, accedemos al elemento de la clase en la que vamos
-    //     // y renumeramos text[i] en el marco del alfabeto de la clase.
-    //     // std::cout << "La letra " << text[i] << endl;
-    //     // std::cout << "      Con clase " << l << endl;
-    //     // std::cout << "      Se traduce dentro de L en " << int(C.rank(text[i] + 1, l)) << endl;
-    //     // std::cout << "      En la posición " << N[l] - 1 << endl;
-    //     val_L[l][N[l] - 1] = uint64_t(C.rank(text[i] + 1, l));
-    // }   
+    // Inicializacion de val_K
+    //  Por cada caracter en el texto
+    text.seekg(0);
+    int i = 0;
+    while(getline(text, word, delimiter))
+    {
+        // Del texto, para la letra text[i] recuperamos su clase
+        l = C[stoul(word)];
+        // Reescribimos text[i] como la clase de i
+        val_K[i] = l;
+        // Avanzamos en el elemento de la clase l leido
+        N[l] += 1;
+        // Para el L de la clase l, accedemos al elemento de la clase en la que vamos
+        // y renumeramos text[i] en el marco del alfabeto de la clase.
+        // std::cout << "La letra " << text[i] << endl;
+        // std::cout << "      Con clase " << l << endl;
+        // std::cout << "      Se traduce dentro de L en " << int(C.rank(text[i] + 1, l)) << endl;
+        // std::cout << "      En la posición " << N[l] - 1 << endl;
+        val_L[l][N[l] - 1] = uint64_t(C.rank(stoul(word) + 1, l));
+    
+        i++;
+    }  
 
-    // // Inicializacion de K
-    // // A partir de val_K, generamos K en formato de Wavelet Tree huffman shaped
-    // //      (!) Indexa en 1
-    // construct_im(K, val_K, 8);
+    // Inicializacion de K
+    // A partir de val_K, generamos K en formato de Wavelet Tree huffman shaped
+    //      (!) Indexa en 1
+    construct_im(K, val_K, 8);
 
-    // // Procesamos cada L de cada clase a una estructura basada en permutaciones
-    // // Generamos una lista auxiliar con cada L_l previamente computado
-    // wt_gmr<>* aux_list = new wt_gmr<>[log2_sigma + 1];
-    // // Por cada clase       
-    // for(l = 0; l < val_L.size(); l++)
-    // {    
-    //     construct_im(aux_list[l], val_L[l], 8);
-    //     L.push_back(aux_list[l]);
-    // }
+    // Procesamos cada L de cada clase a una estructura basada en permutaciones
+    // Generamos una lista auxiliar con cada L_l previamente computado
+    wt_gmr<>* aux_list = new wt_gmr<>[log2_sigma + 1];
+    // Por cada clase       
+    for(l = 0; l < val_L.size(); l++)
+    {    
+        construct_im(aux_list[l], val_L[l], 8);
+        L.push_back(aux_list[l]);
+    }
+    cout << "(:D) Cerro el constructor" << endl;
 }
 
 void Alphabet_Partitioning::Identify_alphabet(string alph_path){
@@ -273,7 +280,7 @@ string Alphabet_Partitioning::to_string(uint64_t i){
     return word;
 }
 
-pair<uint64_t, uint64_t*> Alphabet_Partitioning::text_to_int(string text_path, string alph_path){
+void Alphabet_Partitioning::text_to_int(string text_path, string alph_path){
     // Abrimos el texto
     ifstream raw_text;
     raw_text.open(text_path, ifstream::in);
@@ -282,19 +289,25 @@ pair<uint64_t, uint64_t*> Alphabet_Partitioning::text_to_int(string text_path, s
         cout << "(!!!) Error: No se encuentra el texto especificado" << endl;
         exit(1);
     }
+
     // Generamos un archivo temporal con el documento a generar
-    ofstream{"tmp/tmp_text.txt"};
+    ofstream{tmp_text_path};
     ofstream text;
-    text.open("tmp/tmp_text.txt");
+    text.open(tmp_text_path);
 
-    string line;
+    string line, word;
+    text_size = 0;
+    // Leo por linea
+    Start_BS();
     while(getline(raw_text, line)){
-        
+        // Leo por cada palabra
+        stringstream s_line(line);
+        while(getline(s_line, word, ' ')){
+            text << std::to_string(BS_over_alphabet(word)) << delimiter;
+            text_size++;
+        }
     }
-
-    
-
-
+    End_BS();
 }
 
 uint64_t Alphabet_Partitioning::floor_log2(uint64_t n)
@@ -312,6 +325,7 @@ string Alphabet_Partitioning::access(uint64_t i)
     uint64_t l = K[i];
     int_vector_size_type k = K.rank(i+1, l);
     int_vector_size_type m = L[l][k];
+    cout << "Wea" << endl;
     return to_string(C.select(m, l));
 }
 uint64_t Alphabet_Partitioning::rank(string c, uint64_t i)
@@ -365,13 +379,22 @@ int main(){
     string alphabet_path_ex = "alphabets/word_test.txt";
     string text_path_ex = "text/example_text.txt";
     Alphabet_Partitioning cosa(text_path_ex, alphabet_path_ex);
-    cosa.Start_BS();
-    cout << cosa.BS_over_alphabet("to") << endl;
-    cout << cosa.BS_over_alphabet("not") << endl;
-    cout << cosa.BS_over_alphabet("be") << endl;
-    cout << cosa.BS_over_alphabet("or") << endl;
-    cout << cosa.BS_over_alphabet("wea") << endl;
-    cosa.End_BS();
+    // cosa.Start_BS();
+    // cout << cosa.BS_over_alphabet("to") << endl;
+    // cout << cosa.BS_over_alphabet("not") << endl;
+    // cout << cosa.BS_over_alphabet("be") << endl;
+    // cout << cosa.BS_over_alphabet("or") << endl;
+    // cout << cosa.BS_over_alphabet("wea") << endl;
+    // cosa.End_BS();
+    for (int i = 1; i <= 10; i++)
+    {
+        cout << "Entro" << endl;
+        cout << cosa.access(i) << " ";
+        
+    }
+    cout << endl;
+    
+
     
 }
 

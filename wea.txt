@@ -1,7 +1,11 @@
-8
+N tiene
+2
 3
-1
 4
-(!) Error: Palabra no encontrada. Por favor verifique que el alfabeto contenga todas las palabras posibles
-       (?) Palabra desconocida: wea
-0
+1
+(:D) Cerro el constructor
+Entro
+Wea
+ Entro
+Wea
+to Entro
