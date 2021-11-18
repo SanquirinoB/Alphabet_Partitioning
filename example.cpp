@@ -45,14 +45,15 @@ class Alphabet_Partitioning {
     // Constructor
     Alphabet_Partitioning(string text_path);
     Alphabet_Partitioning(string text_path, string custom_alphabet_path);
-    // TODO: Hacer buenas definiciones
+
     string access(uint64_t i);
     uint64_t rank(string c, uint64_t i);
     uint64_t select(string c, uint64_t i);
 
     uint64_t BS_over_alphabet(string word);
-
     void show_structure();
+
+    string get_snippet(uint64_t i, uint64_t j);
 };
 
 Alphabet_Partitioning::Alphabet_Partitioning(string text_path)
@@ -360,6 +361,31 @@ void Alphabet_Partitioning::show_structure()
     std::cout << endl;
 }
 
+string Alphabet_Partitioning::get_snippet(uint64_t start, uint64_t end)
+{
+    if (start < 0 | start > text_size | end < 0 | end > text_size){
+        cout << "(!!!) [get_snippet] Error: Los indices entregados están fuera de los límites permitidos." << endl;
+        cout << "   start = " << start << endl;
+        cout << "   end = " << end << endl;
+        return "";
+    }
+    if (start > end){
+        cout << "(!!!) [get_snippet] Error: El limite superior es menor que el limite inferior entregado." << endl;
+        cout << "   start = " << start << endl;
+        cout << "   end = " << end << endl;
+        return "";
+    }
+
+    string word = access(start);
+
+    for(uint64_t i = start + 1; i <= end; i++){
+        word += " ";
+        word += access(i);
+    }
+
+    return word;
+}
+
 int main(){
     string alphabet_path_ex = "alphabets/word_test.txt";
     string text_path_ex = "text/example_text.txt";
@@ -370,10 +396,6 @@ int main(){
     // cout << cosa.BS_over_alphabet("or") << endl;
     // cout << cosa.BS_over_alphabet("wea") << endl;
     // cosa.End_BS();
-    for (int i = 1; i <= 10; i++)
-    {
-        cout << cosa.access(i) << "|";
-    }
-    cout << endl;
+    cout << cosa.get_snippet(7, 10) << endl;
 }
 
