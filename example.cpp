@@ -19,7 +19,7 @@ class Alphabet_Partitioning {
     uint64_t* size_L;
 
     // Alfabeto a utilizar
-    // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles 
+    // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles
     // [32, 126] -> [1, 95]
     string alphabet_path = "alphabets/default.txt";
     string tmp_text_path = "tmp/tmp_text.txt";
@@ -31,7 +31,7 @@ class Alphabet_Partitioning {
 
     protected:
     // Con esta funcion transformaremos los caracteres a su valor int, minimo = 1
-    uint64_t to_int(string c);
+    uint64_t to_int(string word);
     // Con esta funcion transformaremos los int a su valor equivalente al alfabeto usado
     string to_string(uint64_t i);
     // Computamos el piso del logaritmo base 2 de un int
@@ -42,18 +42,24 @@ class Alphabet_Partitioning {
     void Identify_alphabet(string alphabet_path);
 
     public:
-    // Constructor
+    // Constructor que recibe solo el path del texto
     Alphabet_Partitioning(string text_path);
+    // Constructor que recibe el path del texto y el path del alfabeto a utilizar.
     Alphabet_Partitioning(string text_path, string custom_alphabet_path);
-
+    // Retorna la palabra en la posición i-esima del texto
     string access(uint64_t i);
-    uint64_t rank(string c, uint64_t i);
-    uint64_t select(string c, uint64_t i);
-
+    // Retorna la cantidad de ocurrencias de la palabra (word) hasta la posición i-esima.
+    uint64_t rank(string word, uint64_t i);
+    // Retorna la posición de la i-esima ocurrencia de la palabra (word)
+    uint64_t select(string word, uint64_t i);
+    // Retorna la posición de la palabra (word) dentro del alfabeto
     uint64_t BS_over_alphabet(string word);
+    // Pretty print de la estructura
     void show_structure();
-
-    string get_snippet(uint64_t i, uint64_t j);
+    // Retorna un fragmento del texto entre las posiciones [start, end]
+    string get_snippet(uint64_t start, uint64_t end);
+    // Retorna un vector de las posiciones donde ocurre la palabra (word)
+    vector<uint64_t>* get_all_ocurrences(string word);
 };
 
 Alphabet_Partitioning::Alphabet_Partitioning(string text_path)
@@ -61,11 +67,11 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path)
     Alphabet_Partitioning(text_path, "alphabets/default.txt");
 }
 Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alphabet_path)
-{   
+{
     // Analiza el alfabeto entregado, actualizando alphabet_size y alphabet_buffer_size
     alphabet_path = custom_alphabet_path;
     alphabet_access.open(alphabet_path, ios::in);
-    
+
     Identify_alphabet(custom_alphabet_path);
     text_to_int(text_path, custom_alphabet_path);
 
@@ -89,8 +95,8 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
     text.clear();
     text.seekg(0);
     //  Ordenamos el alfabeto por frecuencia en orden descendente
-    sort((*F).rbegin(), (*F).rend()); 
-    
+    sort((*F).rbegin(), (*F).rend());
+
     // Definicion de N
     //  Arreglo de enteros, del tamanio del logaritmo base 2 del tamanio del alfabeto
     uint64_t N[log2_sigma + 1];
@@ -104,11 +110,11 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
     int_vector<64> val_C(alphabet_size, 0);
     //  Generamos una variable auxiliar para almacenar la clase de un caracter
     uint64_t l;
-    
+
     // Inicializacion de val_C
     //  Por cada elemento del alfabeto de C [1, log(sigma)]
     for(uint64_t j = 1; j <= alphabet_size; j++)
-    {   
+    {
         // Computamos su clase (l)
         l = floor_log2(j);
         // Para su posicion en val_C, le asignamos su clase (puede haber error aqui)
@@ -116,7 +122,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
         // Incrementamos el tamanio de la clase l en la frecuencia del caracter asociado
         N[l] += (*F)[j-1].first;
     }
-    
+
     // Eliminacion de F
     delete F;
 
@@ -124,7 +130,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
     // A partir de val_C, generamos C en formato de Wavelet Tree huffman shaped
     //      (!) Indexa en 1
     construct_im(C, val_C, 8);
-    
+
     // Definicion de val_L
     //  Arreglo de punteros, del tamanio del logaritmo base 2 del tamanio del alfabeto
     //  En cada elemento almacenamos un arreglo de int con la ocurrencia de caada caracter
@@ -135,14 +141,14 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
     // Inicializacion de val_L
     //  Dentro del alfabeto [0, log2_sigma] (clases posibles)
     for (uint64_t l = 0; l <= log2_sigma; l++)
-    {   
+    {
         // Asociamos el arreglo al arreglo de punteros val_L
         //      (!) Optimizacion levemente inutil, pero asi no guardamos referencia a clases vacias
         val_L.push_back(int_vector<64>(N[l], 1));
         // Definimos el tamanio de la clase l como 0 (limpiamos)
         N[l] = 0;
     }
-    
+
     // Deficion val_K
     //  AVector de int, de tamanio equivalente al texto, almacena el equivalente de S en formato de clases
     int_vector<64> val_K(text_size, 0);
@@ -161,9 +167,9 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
         // Para el L de la clase l, accedemos al elemento de la clase en la que vamos
         // y renumeramos text[i] en el marco del alfabeto de la clase.
         val_L[l][N[l] - 1] = uint64_t(C.rank(stoul(word) + 1, l));
-    
+
         i++;
-    }  
+    }
     text.clear();
     text.seekg(0);
 
@@ -175,9 +181,9 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
     // Procesamos cada L de cada clase a una estructura basada en permutaciones
     // Generamos una lista auxiliar con cada L_l previamente computado
     wt_gmr<>* aux_list = new wt_gmr<>[log2_sigma + 1];
-    // Por cada clase       
+    // Por cada clase
     for(l = 0; l < val_L.size(); l++)
-    {    
+    {
         construct_im(aux_list[l], val_L[l], 8);
         L.push_back(aux_list[l]);
     }
@@ -241,12 +247,12 @@ uint64_t Alphabet_Partitioning::BS_over_alphabet(string word){
     return 0;
 }
 
-uint64_t Alphabet_Partitioning::to_int(string c){
+uint64_t Alphabet_Partitioning::to_int(string word){
     if(!alphabet_access.is_open()){
         cout << "(!!!) Error: No se encuentra el alfabeto especificado" << endl;
         exit(1);
     }
-    uint64_t code = BS_over_alphabet(c);
+    uint64_t code = BS_over_alphabet(word);
     return code;
 }
 string Alphabet_Partitioning::to_string(uint64_t i){
@@ -294,7 +300,7 @@ void Alphabet_Partitioning::text_to_int(string text_path, string alph_path){
 }
 
 uint64_t Alphabet_Partitioning::floor_log2(uint64_t n)
-{   
+{
     uint64_t ans = -1;
     while(n != 0)
     {
@@ -310,21 +316,22 @@ string Alphabet_Partitioning::access(uint64_t i)
     int_vector_size_type m = L[l][k];
     return to_string(C.select(m, l));
 }
-uint64_t Alphabet_Partitioning::rank(string c, uint64_t i)
+uint64_t Alphabet_Partitioning::rank(string word, uint64_t i)
 {
-    uint64_t l = C[to_int(c)];
-    uint64_t m = C.rank(to_int(c) + 1, l);
+    uint64_t l = C[to_int(word)];
+    uint64_t m = C.rank(to_int(word) + 1, l);
     uint64_t k = K.rank(i + 1, l);
     return L[l].rank(k + 1, m);
 }
-uint64_t Alphabet_Partitioning::select(string c, uint64_t i)
+uint64_t Alphabet_Partitioning::select(string word, uint64_t i)
 {
-    uint64_t l = C[to_int(c)];
-    uint64_t m = C.rank(to_int(c) + 1, l);
+    uint64_t l = C[to_int(word)];
+    uint64_t m = C.rank(to_int(word) + 1, l);
     uint64_t k = L[l].select(i, m);
     return K.select(k, l);
 }
 void Alphabet_Partitioning::show_structure()
+
 {
     std::cout << "El contenido de K es:" << endl;
     for(int i = 1; i <= text_size; i++){
@@ -385,17 +392,28 @@ string Alphabet_Partitioning::get_snippet(uint64_t start, uint64_t end)
 
     return word;
 }
+vector<uint64_t>* Alphabet_Partitioning::get_all_ocurrences(string word)
+{
+    vector<uint64_t> *positions = new vector<uint64_t>;
+    for(uint64_t i = 1; i <= K.rank(text_size, C[to_int(word)]); i++)
+    {
+        (*positions).push_back(select(word, i));
+    }
+    return positions;
+}
 
 int main(){
     string alphabet_path_ex = "alphabets/word_test.txt";
     string text_path_ex = "text/example_text.txt";
     Alphabet_Partitioning cosa(text_path_ex, alphabet_path_ex);
-    // cout << cosa.BS_over_alphabet("to") << endl;
-    // cout << cosa.BS_over_alphabet("not") << endl;
-    // cout << cosa.BS_over_alphabet("be") << endl;
-    // cout << cosa.BS_over_alphabet("or") << endl;
-    // cout << cosa.BS_over_alphabet("wea") << endl;
-    // cosa.End_BS();
-    cout << cosa.get_snippet(7, 10) << endl;
+
+    vector<uint64_t>* ans = cosa.get_all_ocurrences("to");
+    cout << "La palabra 'to' ocurre en: " << endl;
+    for(int i = 0; i < 2; i++){
+        cout << "Posicion " << (*ans)[i] << endl;
+    }
+
+
+    return 1;
 }
 
