@@ -56,10 +56,12 @@ class Alphabet_Partitioning {
     uint64_t BS_over_alphabet(string word);
     // Pretty print de la estructura
     void show_structure();
-    // Retorna un fragmento del texto entre las posiciones [start, end]
+    // Retorna un fragmento del texto entre las posiciones [start, end] 
     string get_snippet(uint64_t start, uint64_t end);
     // Retorna un vector de las posiciones donde ocurre la palabra (word)
-    vector<uint64_t>* get_all_ocurrences(string word);
+    vector<uint64_t>* get_all_word_ocurrences(string word);
+    // Retorna un vector de las posiciones donde ocurre la palabra (word)
+    vector<uint64_t>* get_all_phrase_ocurrences(string phrase);
 };
 
 Alphabet_Partitioning::Alphabet_Partitioning(string text_path)
@@ -392,24 +394,92 @@ string Alphabet_Partitioning::get_snippet(uint64_t start, uint64_t end)
 
     return word;
 }
-vector<uint64_t>* Alphabet_Partitioning::get_all_ocurrences(string word)
+vector<uint64_t>* Alphabet_Partitioning::get_all_word_ocurrences(string word)
 {
     vector<uint64_t> *positions = new vector<uint64_t>;
-    for(uint64_t i = 1; i <= K.rank(text_size, C[to_int(word)]); i++)
+    for(uint64_t i = 1; i <= rank(word, text_size); i++)
     {
         (*positions).push_back(select(word, i));
     }
     return positions;
 }
 
+vector<uint64_t>* Alphabet_Partitioning::get_all_phrase_ocurrences(string phrase)
+{
+    stringstream phrase_(phrase);
+    string word;
+    uint64_t n = 0;
+    uint64_t offset = 1;
+    vector<uint64_t> *positions = new vector<uint64_t>;
+    vector<vector<uint64_t>> words_pos;
+    vector<uint64_t> word_pos_size;
+    uint64_t last_found = 0;
+    cout << "1. Recupero los indices invertidos de cada palabra" << endl;
+    while(getline(phrase_, word, ' '))
+    {
+        words_pos.push_back((*get_all_word_ocurrences(word)));
+        cout << "   Indice para la palabra " << word << endl;
+        word_pos_size.push_back(rank(word, text_size));
+        cout << "   canidad de ocurrencias " << word << endl;
+        n++;
+    }
+    cout << "2. Recorro la ocurrencia de la primera palabra" << endl;
+    // Por cada posicion de la primera palabra
+    for(uint64_t i = 0; i < word_pos_size[0] ; i++)
+    {
+        cout << "   (.) Reviso la posicion " << i << endl;
+        // Por cada palabra en la frase
+        for(uint64_t w_i = 1; w_i < n ; w_i++)
+        {
+            cout << "       De la frase, reviso la palabra " << w_i << endl;
+            cout << "       Con offset " << offset << endl;
+            // Por cada posicion de esa palabra
+            for(uint64_t j = 0; j < word_pos_size[w_i] ; j++)
+            {
+                cout << "           Reviso la posicion " << j << endl;
+                if(words_pos[w_i][j] <= last_found + 1) continue;
+                // Si la palabra ocurre 
+                if(words_pos[w_i][j] == words_pos[0][i] + offset)
+                {
+                    // Si termine de leer la frase
+                    if(offset == n - 1){
+                        // Guardo la posicion
+                        (*positions).push_back(words_pos[0][i]);
+                        last_found = words_pos[0][i];
+                        offset = n + 1;
+                        cout << "       (!!!) Encontre una frase" << endl;
+                    } else {
+                        // Si no termine la frase, sigo con la siguiente palabra
+                        offset++;
+                        cout << "       (!!) Encontre una palabra que sigue bien" << endl;
+                        cout << "           Ahora offset es " << offset << endl;
+                    }
+                    break;
+                // Si las ocurrencias ya exceden la posicion buscada, dejamos de buscar la frase para i
+                } else if (words_pos[w_i][j] > words_pos[0][i] + offset){
+                    // Con esto simbolizamos que la frase ya no funciono
+                    cout << "       (!) Me pase con esta palabra, debo seguir con (.) " << endl;
+                    offset = n + 1;
+                    last_found = words_pos[0][i];
+                    break;
+                }
+            }
+            // Si ya encontre la frase o la frase ya no funciono para i, seguimos
+            if(offset == n + 1) break;
+        }
+        offset = 1;
+    }
+    return positions;
+}
+
 int main(){
     string alphabet_path_ex = "alphabets/word_test.txt";
-    string text_path_ex = "text/example_text.txt";
+    string text_path_ex = "text/example_text_large.txt";
     Alphabet_Partitioning cosa(text_path_ex, alphabet_path_ex);
 
-    vector<uint64_t>* ans = cosa.get_all_ocurrences("to");
-    cout << "La palabra 'to' ocurre en: " << endl;
-    for(int i = 0; i < 2; i++){
+    vector<uint64_t>* ans = cosa.get_all_phrase_ocurrences("to be or");
+    cout << "La frase 'to be or' ocurre en: " << endl;
+    for(int i = 0; i < 4; i++){
         cout << "Posicion " << (*ans)[i] << endl;
     }
 
