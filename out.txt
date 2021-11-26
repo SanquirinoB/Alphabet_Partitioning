@@ -1,0 +1,37 @@
+Busco la palabra: glíptica
+   Comparo contra la palabra: golpista
+       Me voy a la a
+   Comparo contra la palabra: cognitivo
+       Me voy a la z
+   Comparo contra la palabra: eléctrico
+       Me voy a la z
+   Comparo contra la palabra: estrellero
+       Me voy a la z
+   Comparo contra la palabra: fóbico
+       Me voy a la z
+   Comparo contra la palabra: galena
+       Me voy a la z
+   Comparo contra la palabra: gaznápiro
+       Me voy a la z
+   Comparo contra la palabra: gigantismo
+       Me voy a la z
+   Comparo contra la palabra: gloria
+       Me voy a la z
+   Comparo contra la palabra: gobierno
+       Me voy a la a
+   Comparo contra la palabra: gluglutear
+       Me voy a la z
+   Comparo contra la palabra: gnosis
+       Me voy a la a
+   Comparo contra la palabra: gnéisica
+       Me voy a la a
+   Comparo contra la palabra: glútea
+       Me voy a la a
+   Comparo contra la palabra: gluon
+       Me voy a la z
+   Comparo contra la palabra: glutamato
+       Me voy a la z
+   Comparo contra la palabra: glutámico
+       Me voy a la z
+(!) [BS_over_alphabet] Error: Palabra no encontrada. Por favor verifique que el alfabeto contenga todas las palabras posibles
+       (?) Palabra desconocida:glíptica
