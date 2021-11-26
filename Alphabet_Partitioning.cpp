@@ -24,9 +24,11 @@ class Alphabet_Partitioning {
     string alphabet_path = "alphabets/default.txt";
     string tmp_text_path = "tmp/tmp_text.txt";
     vector<uint64_t> alphabet_word_reference;
-    ifstream alphabet_access;
+    
     uint64_t alphabet_size;
     uint64_t text_size;
+
+    ifstream alphabet_access;
     char delimiter = '/';
 
     protected:
@@ -59,9 +61,9 @@ class Alphabet_Partitioning {
     // Retorna un fragmento del texto entre las posiciones [start, end] 
     string get_snippet(uint64_t start, uint64_t end);
     // Retorna un vector de las posiciones donde ocurre la palabra (word)
-    vector<uint64_t>* get_all_word_ocurrences(string word);
+    pair<vector<uint64_t>*, uint64_t> get_all_word_ocurrences(string word);
     // Retorna un vector de las posiciones donde ocurre la palabra (word)
-    vector<uint64_t>* get_all_phrase_ocurrences(string phrase);
+    pair<vector<uint64_t>*, uint64_t> get_all_phrase_ocurrences(string phrase);
 };
 
 Alphabet_Partitioning::Alphabet_Partitioning(string text_path)
@@ -405,26 +407,27 @@ string Alphabet_Partitioning::get_snippet(uint64_t start, uint64_t end)
         return "";
     }
 
-    string word = access(start);
+    string snippet = access(start);
 
     for(uint64_t i = start + 1; i <= end; i++){
-        word += " ";
-        word += access(i);
+        snippet += " ";
+        snippet += access(i);
     }
 
-    return word;
+    return snippet;
 }
-vector<uint64_t>* Alphabet_Partitioning::get_all_word_ocurrences(string word)
+pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_word_ocurrences(string word)
 {
     vector<uint64_t> *positions = new vector<uint64_t>;
-    for(uint64_t i = 1; i <= rank(word, text_size); i++)
+    uint64_t size = rank(word, text_size);
+    for(uint64_t i = 1; i <= size; i++)
     {
         (*positions).push_back(select(word, i));
     }
-    return positions;
+    return make_pair(positions, size);
 }
 
-vector<uint64_t>* Alphabet_Partitioning::get_all_phrase_ocurrences(string phrase)
+pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrences(string phrase)
 {
     stringstream phrase_(phrase);
     string word;
@@ -434,10 +437,12 @@ vector<uint64_t>* Alphabet_Partitioning::get_all_phrase_ocurrences(string phrase
     vector<vector<uint64_t>> words_pos;
     vector<uint64_t> word_pos_size;
     uint64_t last_found = 0;
+    uint64_t size = 0;
     
     while(getline(phrase_, word, ' '))
     {
-        words_pos.push_back((*get_all_word_ocurrences(word)));
+        pair<vector<uint64_t>*, uint64_t> result = get_all_word_ocurrences(word);
+        words_pos.push_back((*result.first));
         word_pos_size.push_back(rank(word, text_size));
         n++;
     }
@@ -458,6 +463,7 @@ vector<uint64_t>* Alphabet_Partitioning::get_all_phrase_ocurrences(string phrase
                     if(offset == n - 1){
                         // Guardo la posicion
                         (*positions).push_back(words_pos[0][i]);
+                        size++;
                         last_found = words_pos[0][i];
                         offset = n + 1;
                     } else {
@@ -478,6 +484,6 @@ vector<uint64_t>* Alphabet_Partitioning::get_all_phrase_ocurrences(string phrase
         }
         offset = 1;
     }
-    return positions;
+    return make_pair(positions, size);
 }
 
