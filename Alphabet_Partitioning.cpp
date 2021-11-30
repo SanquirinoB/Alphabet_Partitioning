@@ -203,7 +203,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
         L.push_back(aux_list[l]);
     }
     cout << "   Construido codificador por clases!" << endl;
-
+    //remove(tmp_text_path);
     cout << "Proceso de compresión finalizado." << endl;
 }
 
@@ -251,6 +251,7 @@ uint64_t Alphabet_Partitioning::BS_over_alphabet(string word){
             //cout << "       Me voy a la z" << endl;
             first = middle + 1;
         } else if (status == 0){
+            //cout << "       (!) Retorno " << (middle + 1) <<  endl;
             return middle + 1;
         } else {
             //cout << "       Me voy a la a" << endl;
@@ -267,7 +268,6 @@ uint64_t Alphabet_Partitioning::BS_over_alphabet(string word){
     }
     alphabet_access.clear();
     alphabet_access.seekg(0);
-
     return 0;
 }
 
@@ -334,7 +334,7 @@ uint64_t Alphabet_Partitioning::floor_log2(uint64_t n)
     return ans;
 }
 string Alphabet_Partitioning::access(uint64_t i)
-{
+{   
     uint64_t l = K[i];
     int_vector_size_type k = K.rank(i+1, l);
     int_vector_size_type m = L[l][k];
@@ -406,9 +406,9 @@ string Alphabet_Partitioning::get_snippet(uint64_t start, uint64_t end)
         cout << "   end = " << end << endl;
         return "";
     }
-
+    
     string snippet = access(start);
-
+    
     for(uint64_t i = start + 1; i <= end; i++){
         snippet += " ";
         snippet += access(i);

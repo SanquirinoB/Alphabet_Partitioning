@@ -61,14 +61,12 @@ string Simple_II::get_snippet(uint64_t start, uint64_t end){
 pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_word_ocurrences(string word){
     vector<uint64_t> *positions = new vector<uint64_t>;
     uint64_t size = 0;
-
     for (uint64_t i = 0; i < text_size; i++){
         if (tokenized_text[i].compare(word) == 0){
             (*positions).push_back(i);
             size ++;
         }
     }
-
     return make_pair(positions, size);
 }
 
