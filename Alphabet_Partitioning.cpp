@@ -22,7 +22,7 @@ class Alphabet_Partitioning {
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles
     // [32, 126] -> [1, 95]
     string alphabet_path = "alphabets/default.txt";
-    string tmp_text_path = "tmp/tmp_text.txt";
+    string tmp_text_path = "tmp/tmp_text_e4.txt";
     vector<uint64_t> alphabet_word_reference;
     
     uint64_t alphabet_size;
@@ -64,6 +64,8 @@ class Alphabet_Partitioning {
     pair<vector<uint64_t>*, uint64_t> get_all_word_ocurrences(string word);
     // Retorna un vector de las posiciones donde ocurre la palabra (word)
     pair<vector<uint64_t>*, uint64_t> get_all_phrase_ocurrences(string phrase);
+
+    uint64_t get_text_size();
 };
 
 Alphabet_Partitioning::Alphabet_Partitioning(string text_path)
@@ -203,7 +205,7 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
         L.push_back(aux_list[l]);
     }
     cout << "   Construido codificador por clases!" << endl;
-    //remove(tmp_text_path);
+    remove(tmp_text_path);
     cout << "Proceso de compresión finalizado." << endl;
 }
 
@@ -342,15 +344,17 @@ string Alphabet_Partitioning::access(uint64_t i)
 }
 uint64_t Alphabet_Partitioning::rank(string word, uint64_t i)
 {
-    uint64_t l = C[to_int(word)];
-    uint64_t m = C.rank(to_int(word) + 1, l);
+    uint64_t w_int = to_int(word);
+    uint64_t l = C[w_int];
+    uint64_t m = C.rank(w_int + 1, l);
     uint64_t k = K.rank(i + 1, l);
     return L[l].rank(k + 1, m);
 }
 uint64_t Alphabet_Partitioning::select(string word, uint64_t i)
 {
-    uint64_t l = C[to_int(word)];
-    uint64_t m = C.rank(to_int(word) + 1, l);
+    uint64_t w_int = to_int(word);
+    uint64_t l = C[w_int];
+    uint64_t m = C.rank(w_int + 1, l);
     uint64_t k = L[l].select(i, m);
     return K.select(k, l);
 }
@@ -485,5 +489,10 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
         offset = 1;
     }
     return make_pair(positions, size);
+}
+
+uint64_t Alphabet_Partitioning::get_text_size()
+{
+    return text_size;
 }
 

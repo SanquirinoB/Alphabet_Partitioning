@@ -2,7 +2,7 @@
 
 ## De qué se trata esto
 Este proyecto consiste en usar alphabet partitioning para comprimir un texto en lenguaje natural de modo de soportar no sólo descompresión sino tres funciones más: 
-1. Etraer un snippet del texto (palabras i a la j)
+1. Extraer un snippet del texto (palabras i a la j)
 2. Entregar todas las posiciones donde ocurre una palabra.
 3. Entregar todas las posiciones donde ocurre una frase. 
 

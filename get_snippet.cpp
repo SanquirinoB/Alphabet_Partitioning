@@ -4,49 +4,59 @@
 
 int main(){
     
-    string text_path = "text/text_2.txt";
-	string alph_path = "alphabets/eng_1.txt";
+    string text_path = "text/english_4(1).txt";
+	string alph_path = "alphabets/english_alphabet.txt";
 
     cout << "[Alphabet_Partitioning]" << endl;
     Alphabet_Partitioning ap(text_path, alph_path);
+    uint64_t ap_size = ap.get_text_size();
     cout << "[Simple_II]" << endl;
     Simple_II sii(text_path);
 
+    ofstream results;
+    results.open("results/get_snippet/ap_gs_e4.csv");
+
     time_t begin;
     time_t end;
-    cout << "Busco en [Alphabet_Partitioning]" << endl;
-    begin = clock();
-    string wea_1 = ap.get_snippet(301, 5301);
-    end = clock();
-    cout << "   [Snippet] Se demoró " << (float)(end - begin)/CLOCKS_PER_SEC << endl;
+    string ans;
+    results << "lenght\ttime\n";
 
-    begin = clock();
-    pair<vector<uint64_t>*, uint64_t> wea_2 = ap.get_all_word_ocurrences("lectures");
-    end = clock();
-    cout << "   [Words] Se demoró " << (float)(end - begin)/CLOCKS_PER_SEC << "| Ocurrencias: "  << wea_2.second << endl;
+    double sizes[] = {1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0, 18.5, 19.0, 19.5, 20.0, 20.5, 21.0, 21.5, 22.0, 22.5, 23.0};
+    
+    vector<pair<uint64_t, uint64_t>> pairs;
+    uint64_t i;
+    uint64_t n = 0;
+    for(double div:sizes)
+    {   
+        if(pow(2,div) > ap_size) continue;
+        uint64_t l = (uint64_t)(ap_size/pow(2,div));
+        cout << ap_size << "|" << pow(2,div) << "|" << l << endl;
+        uint64_t m = ap_size - l + 1;
+        for(int cosa = 1; cosa <= 10; cosa++)
+        {
+            i = (uint64_t)(rand() % m) + 1;
+            pairs.push_back(make_pair(i,i+l));
+            n++;
+        }
+    }
+    for(uint64_t i = 0; i < n; i++)
+    {
+        begin = clock();
+        ans = ap.get_snippet(pairs[i].first, pairs[i].second);
+        end = clock();
+        results << (pairs[i].second - pairs[i].first) << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
+    }
 
-    begin = clock();
-    pair<vector<uint64_t>*, uint64_t> wea_3 = ap.get_all_phrase_ocurrences("it is");
-    end = clock();
-    cout << "   [Phrase] Se demoró " << (float)(end - begin)/CLOCKS_PER_SEC << "| Ocurrencias: "  << wea_3.second << endl;
+    results.close();
 
-    cout << "Busco en [Simple_II]" << endl;
-    begin = clock();
-    string wea_4 = sii.get_snippet(300, 5300);
-    end = clock();
-    cout << "   [Snippet] Se demoró " << (float)(end - begin)/CLOCKS_PER_SEC << endl;
-
-    begin = clock();
-    pair<vector<uint64_t>*, uint64_t> wea_5 = sii.get_all_word_ocurrences("lectures");
-    end = clock();
-    cout << "   [Words] Se demoró " << (float)(end - begin)/CLOCKS_PER_SEC << "| Ocurrencias: "  << wea_5.second << endl;
-
-    begin = clock();
-    pair<vector<uint64_t>*, uint64_t> wea_6 = sii.get_all_phrase_ocurrences("it is");
-    end = clock();
-    cout << "   [Phrase] Se demoró " << (float)(end - begin)/CLOCKS_PER_SEC << "| Ocurrencias: "  << wea_6.second << endl;
-
-
-
-
+    results.open("results/get_snippet/sii_gs_e4.csv");
+    results << "lenght\ttime\n";
+    for(uint64_t i = 0; i < n; i++)
+    {
+        begin = clock();
+        ans = sii.get_snippet(pairs[i].first, pairs[i].second);
+        end = clock();
+        results << (pairs[i].second - pairs[i].first) << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
+    }
+    results.close();
 }

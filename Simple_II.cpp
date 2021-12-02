@@ -24,6 +24,8 @@ public:
     pair<vector<uint64_t>*, uint64_t> get_all_word_ocurrences(string word);
     // Retorna un vector de las posiciones donde ocurre la palabra (word)
     pair<vector<uint64_t>*, uint64_t> get_all_phrase_ocurrences(string phrase);
+
+    uint64_t get_text_size();
 };
 
 Simple_II::Simple_II(string txt_path){
@@ -34,7 +36,6 @@ Simple_II::Simple_II(string txt_path){
     cout << "Procesando el texto..." << endl;
     process_text();
     cout << "   Texto procesado!" << endl;
-
     text.close();
 }
 
@@ -127,4 +128,9 @@ pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(string ph
         offset = 1;
     }
     return make_pair(positions, size);
+}
+
+uint64_t Simple_II::get_text_size()
+{
+    return text_size;
 }
