@@ -48,5 +48,7 @@ int main(){
     }
     results.close();
     test.close();
+
+    return 1;
 }
 

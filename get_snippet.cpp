@@ -4,8 +4,8 @@
 
 int main(){
     
-    string text_path = "text/english_4(1).txt";
-	string alph_path = "alphabets/english_alphabet.txt";
+    string text_path = "text/proteins_3(1).txt";
+	string alph_path = "alphabets/proteins_alphabet.txt";
 
     cout << "[Alphabet_Partitioning]" << endl;
     Alphabet_Partitioning ap(text_path, alph_path);
@@ -14,7 +14,7 @@ int main(){
     Simple_II sii(text_path);
 
     ofstream results;
-    results.open("results/get_snippet/ap_gs_e4.csv");
+    results.open("results/get_snippet/ap_gs_p3.csv");
 
     time_t begin;
     time_t end;
@@ -28,8 +28,8 @@ int main(){
     uint64_t n = 0;
     for(double div:sizes)
     {   
-        if(pow(2,div) > ap_size) continue;
         uint64_t l = (uint64_t)(ap_size/pow(2,div));
+        if(pow(2,div) > ap_size | l > 1153140) continue;
         cout << ap_size << "|" << pow(2,div) << "|" << l << endl;
         uint64_t m = ap_size - l + 1;
         for(int cosa = 1; cosa <= 10; cosa++)
@@ -49,7 +49,7 @@ int main(){
 
     results.close();
 
-    results.open("results/get_snippet/sii_gs_e4.csv");
+    results.open("results/get_snippet/sii_gs_p3.csv");
     results << "lenght\ttime\n";
     for(uint64_t i = 0; i < n; i++)
     {
@@ -59,4 +59,6 @@ int main(){
         results << (pairs[i].second - pairs[i].first) << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
     results.close();
+
+    return 1;
 }
