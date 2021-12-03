@@ -22,7 +22,7 @@ class Alphabet_Partitioning {
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles
     // [32, 126] -> [1, 95]
     string alphabet_path = "alphabets/default.txt";
-    string tmp_text_path = "tmp/tmp_text_{}.txt";
+    string tmp_text_path = "tmp/tmp_text_";
     vector<uint64_t> alphabet_word_reference;
     
     uint64_t alphabet_size;
