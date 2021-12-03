@@ -4,12 +4,16 @@
 
 int main(){
     
-    string text_path = "text/english_4(1).txt";
-	string alph_path = "alphabets/english_alphabet.txt";
-    string id = "e4";
+    string text_path, alph_path, id;
+	cout << "Ingrese el path del archivo a comprimir: ";
+    cin >> text_path;
+    cout << "Ingrese el path del alfabeto a usar: ";
+    cin >> alph_path;
+    cout << "Ingrese el id para resultados: ";
+    cin >> id;
 
     cout << "[Alphabet_Partitioning]" << endl;
-    Alphabet_Partitioning ap(text_path, alph_path);
+    Alphabet_Partitioning ap(text_path, alph_path, id);
     uint64_t ap_size = ap.get_text_size();
     cout << "[Simple_II]" << endl;
     Simple_II sii(text_path);
@@ -26,6 +30,8 @@ int main(){
     phrases.open("experiments/phrases_" + id + ".txt");
     string phrase;
 
+    cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
+
     while(getline(phrases, phrase))
     {
         begin = clock();
@@ -37,8 +43,13 @@ int main(){
     phrases.seekg(0);
     results.close();
 
+    cout << "   Terminado!!" << endl;
+
     results.open("results/get_all_phrase_occurrences/sii_gp_" + id + ".csv");
     results << "length\toccurences\ttime\n";
+
+    cout << "Inicia el proceso de Simple_II..." << endl;
+
     while(getline(phrases, phrase))
     {
         begin = clock();
@@ -48,6 +59,8 @@ int main(){
     }
     phrases.close();
     results.close();
+
+    cout << "   Terminado!!" << endl;
 
     return 1;
 }

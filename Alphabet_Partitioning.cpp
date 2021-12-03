@@ -22,7 +22,7 @@ class Alphabet_Partitioning {
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles
     // [32, 126] -> [1, 95]
     string alphabet_path = "alphabets/default.txt";
-    string tmp_text_path = "tmp/tmp_text_e4.txt";
+    string tmp_text_path = "tmp/tmp_text_{}.txt";
     vector<uint64_t> alphabet_word_reference;
     
     uint64_t alphabet_size;
@@ -45,9 +45,9 @@ class Alphabet_Partitioning {
 
     public:
     // Constructor que recibe solo el path del texto
-    Alphabet_Partitioning(string text_path);
+    Alphabet_Partitioning(string text_path, string index);
     // Constructor que recibe el path del texto y el path del alfabeto a utilizar.
-    Alphabet_Partitioning(string text_path, string custom_alphabet_path);
+    Alphabet_Partitioning(string text_path, string custom_alphabet_path, string index);
     // Retorna la palabra en la posición i-esima del texto
     string access(uint64_t i);
     // Retorna la cantidad de ocurrencias de la palabra (word) hasta la posición i-esima.
@@ -68,15 +68,16 @@ class Alphabet_Partitioning {
     uint64_t get_text_size();
 };
 
-Alphabet_Partitioning::Alphabet_Partitioning(string text_path)
+Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string index)
 {
-    Alphabet_Partitioning(text_path, "alphabets/default.txt");
+    Alphabet_Partitioning(text_path, "alphabets/default.txt", index);
 }
-Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alphabet_path)
+Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alphabet_path, string index)
 {
     // Analiza el alfabeto entregado, actualizando alphabet_size y alphabet_buffer_size
     alphabet_path = custom_alphabet_path;
     alphabet_access.open(alphabet_path, ios::in);
+    tmp_text_path = tmp_text_path + index + ".txt";
 
     cout << "Identificando alfabeto..." << endl;
     Identify_alphabet(custom_alphabet_path);

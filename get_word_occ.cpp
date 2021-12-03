@@ -4,11 +4,16 @@
 
 int main(){
     
-    string text_path = "text/proteins_4(1).txt";
-	string alph_path = "alphabets/proteins_alphabet.txt";
+    string text_path, alph_path, id;
+	cout << "Ingrese el path del archivo a comprimir: ";
+    cin >> text_path;
+    cout << "Ingrese el path del alfabeto a usar: ";
+    cin >> alph_path;
+    cout << "Ingrese el id para resultados: ";
+    cin >> id;
 
     cout << "[Alphabet_Partitioning]" << endl;
-    Alphabet_Partitioning ap(text_path, alph_path);
+    Alphabet_Partitioning ap(text_path, alph_path, id);
     cout << "[Simple_II]" << endl;
     Simple_II sii(text_path);
 
@@ -25,6 +30,8 @@ int main(){
     pair<vector<uint64_t>*, uint64_t> ans;
     results << "word\toccurences\ttime\n";
 
+    cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
+    
     while(getline(test, word))
     {
         begin = clock();
@@ -37,8 +44,13 @@ int main(){
     test.clear();
     test.seekg(0);
 
+    cout << "   Terminado!!" << endl;
+
     results.open("results/sii_gawo_p4.csv");
     results << "word\toccurences\ttime\n";
+
+    cout << "Inicia el proceso de Simple_II..." << endl;
+
     while(getline(test, word))
     {
         begin = clock();
@@ -48,6 +60,8 @@ int main(){
     }
     results.close();
     test.close();
+
+    cout << "   Terminado!!" << endl;
 
     return 1;
 }

@@ -2,13 +2,19 @@
 #include "Simple_II.cpp"
 #include <time.h>
 
+
 int main(){
     
-    string text_path = "text/proteins_3(1).txt";
-	string alph_path = "alphabets/proteins_alphabet.txt";
+    string text_path, alph_path, id;
+	cout << "Ingrese el path del archivo a comprimir: ";
+    cin >> text_path;
+    cout << "Ingrese el path del alfabeto a usar: ";
+    cin >> alph_path;
+    cout << "Ingrese el id para resultados: ";
+    cin >> id;
 
     cout << "[Alphabet_Partitioning]" << endl;
-    Alphabet_Partitioning ap(text_path, alph_path);
+    Alphabet_Partitioning ap(text_path, alph_path, id);
     uint64_t ap_size = ap.get_text_size();
     cout << "[Simple_II]" << endl;
     Simple_II sii(text_path);
@@ -39,6 +45,8 @@ int main(){
             n++;
         }
     }
+    cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
+    
     for(uint64_t i = 0; i < n; i++)
     {
         begin = clock();
@@ -48,9 +56,13 @@ int main(){
     }
 
     results.close();
+    cout << "   Terminado!!" << endl;
 
     results.open("results/get_snippet/sii_gs_p3.csv");
     results << "lenght\ttime\n";
+
+    cout << "Inicia el proceso de Simple_II..." << endl;
+
     for(uint64_t i = 0; i < n; i++)
     {
         begin = clock();
@@ -59,6 +71,8 @@ int main(){
         results << (pairs[i].second - pairs[i].first) << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
     results.close();
+
+    cout << "   Terminado!!" << endl;
 
     return 1;
 }
