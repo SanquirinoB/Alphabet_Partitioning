@@ -20,7 +20,7 @@ int main(){
     Simple_II sii(text_path);
 
     ofstream results;
-    results.open("results/get_snippet/ap_gs_p3.csv");
+    results.open("results/get_snippet/ap_gs_" + id + ".csv");
 
     time_t begin;
     time_t end;
@@ -46,7 +46,7 @@ int main(){
         }
     }
     cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
-    
+
     for(uint64_t i = 0; i < n; i++)
     {
         begin = clock();
@@ -58,7 +58,7 @@ int main(){
     results.close();
     cout << "   Terminado!!" << endl;
 
-    results.open("results/get_snippet/sii_gs_p3.csv");
+    results.open("results/get_snippet/sii_gs_" + id + ".csv");
     results << "lenght\ttime\n";
 
     cout << "Inicia el proceso de Simple_II..." << endl;

@@ -21,7 +21,7 @@ int main(){
     test.open(alph_path);
 
     ofstream results;
-    results.open("results/ap_gawo_p4.csv");
+    results.open("results/ap_gawo_" + id + ".csv");
 
     string word;
     time_t begin;
@@ -31,7 +31,7 @@ int main(){
     results << "word\toccurences\ttime\n";
 
     cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
-    
+
     while(getline(test, word))
     {
         begin = clock();
@@ -46,7 +46,7 @@ int main(){
 
     cout << "   Terminado!!" << endl;
 
-    results.open("results/sii_gawo_p4.csv");
+    results.open("results/sii_gawo_" + id + ".csv");
     results << "word\toccurences\ttime\n";
 
     cout << "Inicia el proceso de Simple_II..." << endl;
