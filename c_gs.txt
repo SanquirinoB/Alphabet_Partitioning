@@ -1,0 +1,17 @@
+# Get Snippets
+g++ -std=c++11 -DNDEBUG -O3 -I/u/a/2019/fsanchir/include -L/u/a/2019/fsanchir/lib get_snippet.cpp -o out/gse4 -lsdsl -ldivsufsort -ldivsufsort64
+text/english_3(1).txt
+alphabets/english_alphabet.txt
+e3
+g++ -std=c++11 -DNDEBUG -O3 -I/u/a/2019/fsanchir/include -L/u/a/2019/fsanchir/lib get_snippet.cpp -o out/gse3 -lsdsl -ldivsufsort -ldivsufsort64
+text/english_4(1).txt
+alphabets/english_alphabet.txt
+e4
+g++ -std=c++11 -DNDEBUG -O3 -I/u/a/2019/fsanchir/include -L/u/a/2019/fsanchir/lib get_snippet.cpp -o out/gsp3 -lsdsl -ldivsufsort -ldivsufsort64
+text/proteins_3(1).txt
+alphabets/proteins_alphabet.txt
+p3
+g++ -std=c++11 -DNDEBUG -O3 -I/u/a/2019/fsanchir/include -L/u/a/2019/fsanchir/lib get_snippet.cpp -o out/gsp4 -lsdsl -ldivsufsort -ldivsufsort64
+text/proteins_4(1).txt
+alphabets/proteins_alphabet.txt
+p4
