@@ -17,6 +17,8 @@ class Alphabet_Partitioning {
     // Conjunto de L_l
     vector<wt_gmr<>> L ;
     uint64_t* size_L;
+    string cur_word;
+    uint64_t cur_id;
 
     // Alfabeto a utilizar
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles

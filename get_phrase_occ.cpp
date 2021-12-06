@@ -34,9 +34,11 @@ int main(){
 
     while(getline(phrases, phrase))
     {
+        cout << "Inicia busqueda de frase de largo: " << phrase.length() << endl;
         begin = clock();
         ans = ap.get_all_phrase_ocurrences(phrase);
         end = clock();
+        cout << "   Encontrada en " << (float)(end - begin)/CLOCKS_PER_SEC << "segundos." << endl;
         results << phrase.length() << "\t" << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
     phrases.clear();
