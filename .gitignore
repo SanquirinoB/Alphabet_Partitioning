@@ -4,9 +4,7 @@ test
 *.bmp
 */tmp_text*
 results
-gse3
-gse4
-gsp3
-gsp4
+results_new
 */phrases_*
 out
+tmp

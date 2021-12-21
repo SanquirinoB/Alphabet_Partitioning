@@ -1,29 +1,28 @@
 #include "AP_exp.cpp"
-#include "Simple_II.cpp"
+#include "SII_exp.cpp"
 #include <time.h>
 
 int main(){
     
-    string text_path, alph_path, id;
+    string text_path, alph_path, id, size;
 	cout << "Ingrese el path del archivo a comprimir: ";
     cin >> text_path;
+    cout << "Ingrese la cantidad de palabras: ";
+    cin >> size;
     cout << "Ingrese el path del alfabeto a usar: ";
     cin >> alph_path;
     cout << "Ingrese el id para resultados: ";
     cin >> id;
 
     cout << "[Alphabet_Partitioning]" << endl;
-    Alphabet_Partitioning ap(text_path, alph_path, id);
+    Alphabet_Partitioning ap(text_path, stoul(size), alph_path, id, false, false);
     cout << "[Simple_II]" << endl;
     Simple_II sii(text_path);
 
-    ifstream test;
-    test.open(alph_path);
-
     ofstream results;
-    results.open("results/ap_gawo_" + id + ".csv");
+    results.open("results_new/get_all_word_occurrences/ap_gawo_" + id + ".csv");
 
-    string word;
+    string word_str;
     time_t begin;
     time_t end;
     int count = 0;
@@ -32,7 +31,7 @@ int main(){
 
     cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
 
-    while(getline(test, word))
+    for(uint64_t word = 1; word <= 418038; word++)
     {
         begin = clock();
         ans = ap.get_all_word_ocurrences(word);
@@ -41,25 +40,23 @@ int main(){
     }
 
     results.close();
-    test.clear();
-    test.seekg(0);
 
     cout << "   Terminado!!" << endl;
 
-    results.open("results/sii_gawo_" + id + ".csv");
+    results.open("results_new/get_all_word_occurrences/sii_gawo_" + id + ".csv");
     results << "word\toccurences\ttime\n";
 
     cout << "Inicia el proceso de Simple_II..." << endl;
 
-    while(getline(test, word))
+    for(uint64_t word = 1; word <= 418038; word++)
     {
+        word_str = std::to_string(word);
         begin = clock();
-        ans = sii.get_all_word_ocurrences(word);
+        ans = sii.get_all_word_ocurrences(word_str);
         end = clock();
         results << word << "\t" << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
     results.close();
-    test.close();
 
     cout << "   Terminado!!" << endl;
 

@@ -1,6 +1,7 @@
 #include <sdsl/wavelet_trees.hpp>
 #include <iostream>
 #include <map>
+#include <stdio.h>
 
 using namespace std;
 using namespace sdsl;
@@ -43,14 +44,14 @@ class Alphabet_Partitioning {
     // Nolotar que se computa en O(log(n))
     uint64_t floor_log2(uint64_t n);
 
-    void text_to_int(string text_path, string alph_path);
+    void text_to_int(string text_path, string alph_path, string id, bool keep_lines);
     void Identify_alphabet(string alphabet_path);
 
     public:
     // Constructor que recibe solo el path del texto
-    Alphabet_Partitioning(string text_path, string index);
+    Alphabet_Partitioning(string text_path, uint64_t size, string index);
     // Constructor que recibe el path del texto y el path del alfabeto a utilizar.
-    Alphabet_Partitioning(string text_path, string custom_alphabet_path, string index);
+    Alphabet_Partitioning(string text_path, uint64_t size, string custom_alphabet_path, string index, bool convertion, bool keep_lines);
     // Retorna la palabra en la posición i-esima del texto
     uint64_t access(uint64_t i);
     // Retorna la cantidad de ocurrencias de la palabra (word) hasta la posición i-esima.
@@ -71,23 +72,30 @@ class Alphabet_Partitioning {
     uint64_t get_text_size();
 };
 
-Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string index)
+Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, string index)
 {
-    Alphabet_Partitioning(text_path, "alphabets/default.txt", index);
+    Alphabet_Partitioning(text_path, size, "alphabets/default.txt", index, false, false);
 }
-Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alphabet_path, string index)
-{
+Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, string custom_alphabet_path, string index, bool convertion, bool keep_lines)
+{   
     // Analiza el alfabeto entregado, actualizando alphabet_size y alphabet_buffer_size
-    // alphabet_path = custom_alphabet_path;
-    // alphabet_access.open(alphabet_path, ios::in);
-    // tmp_text_path = tmp_text_path + index + ".txt";
+    alphabet_path = custom_alphabet_path;
+    alphabet_access.open(alphabet_path, ios::in);
+    tmp_text_path = "tmp/" + index + ".txt";
+    text_size = size;
 
     cout << "Identificando alfabeto..." << endl;
     Identify_alphabet(custom_alphabet_path);
     cout << "   Alfabeto identificado!" << endl;
-    // cout << "Parseando el texto..." << endl;
-    // text_to_int(text_path, custom_alphabet_path);
-    // cout << "   Texto parseado!" << endl;
+
+    if(convertion)
+    {
+        cout << "Traduciendo el texto..." << endl;
+        text_to_int(text_path, custom_alphabet_path, index, keep_lines);
+        cout << "   Texto parseado!" << endl;
+        cout << "Proceso finalizado!" << endl;
+        return;
+    }
 
     tmp_text_path = text_path;
 
@@ -211,7 +219,6 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, string custom_alp
         L.push_back(aux_list[l]);
     }
     cout << "   Construido codificador por clases!" << endl;
-    remove(tmp_text_path);
     cout << "Proceso de compresión finalizado." << endl;
 }
 
@@ -303,7 +310,7 @@ string Alphabet_Partitioning::to_string(uint64_t i){
     return word;
 }
 
-void Alphabet_Partitioning::text_to_int(string text_path, string alph_path){
+void Alphabet_Partitioning::text_to_int(string text_path, string alph_path, string id, bool keep_lines){
     // Abrimos el texto
     ifstream raw_text;
     raw_text.open(text_path, ifstream::in);
@@ -328,9 +335,12 @@ void Alphabet_Partitioning::text_to_int(string text_path, string alph_path){
             text << std::to_string(BS_over_alphabet(word)) << delimiter;
             text_size++;
         }
+        if(keep_lines){text << "\n";}
     }
+    cout << "El tamano del texto es: " << text_size << endl;
     raw_text.close();
     text.close();
+    rename(tmp_text_path, "tmp/" + id + "_size_" + std::to_string(text_size) + ".txt");
 }
 
 uint64_t Alphabet_Partitioning::floor_log2(uint64_t n)
@@ -442,7 +452,7 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_word_ocurrences
 
 pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrences(vector<uint64_t> phrase)
 {
-    uint64_t min_occ = text_size, r = 0, offset = 0, offset_min = 0, l = 0, n_occ = 0;
+    uint64_t min_occ = text_size, r = 0, offset = 1, offset_min = 1, l = 0, n_occ = 0, word_min;
     vector<uint64_t> *positions = new vector<uint64_t>;
     // Identificamos el de menor ocurrencia
     for(uint64_t word:phrase)
@@ -452,31 +462,42 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
         {
             min_occ = r;
             offset_min = offset; 
+            word_min = word;
         }
         offset++;
         l++;
     }
-    uint64_t pos_end_phrase = 0, i_last_occ = 0, pos_word_i = 0;
-    bool b_found = false;
-    for(uint64_t pos_word_min = 1; pos_word_min <= min_occ; pos_word_min++)
+
+    uint64_t pos_end_phrase = 0, i_last_occ = 0, pos_word_i = 0, pos_word_min = 0, pos_begin_phrase = 0;
+    for(uint64_t i_word_min = 1; i_word_min <= min_occ; i_word_min++)
     {
+        pos_word_min = select(word_min, i_word_min);
         pos_end_phrase = pos_word_min + l - offset_min;
+        pos_begin_phrase = pos_word_min - offset_min + 1;
         offset = 0;
+        cout << "   Posicion inicial de frase: " << pos_begin_phrase << endl;
+        cout << "   Posicion final de frase: " << pos_end_phrase << endl;
+        cout << "   Posicion palabra min: " << pos_word_min << endl;
+
         for(uint64_t word:phrase)
         {
+            cout << "       (!) Palabra: " << word << endl;
             i_last_occ = rank(word, pos_end_phrase);
             pos_word_i = select(word,i_last_occ);
-            if(pos_word_i != pos_word_min - offset) break;
+            cout << "       Posicion de palabra: " << pos_word_i << endl;
+            cout << "       Offset de palabra: " << offset << endl;
+            cout << "       Dd espero: " << (pos_begin_phrase + offset) << endl;
+            if(pos_word_i != (pos_begin_phrase + offset)) break;
             offset++;
-
         }
-        if(b_found)
+        cout << "OFFSET: " << offset << "L: " << l << endl;
+        if(offset == l)
         {
-            (*positions).push_back(pos_end_phrase - offset_min);
+            (*positions).push_back(pos_begin_phrase);
             n_occ++;
-            b_found = false;
         }
     }
+
     return make_pair(positions, n_occ);
 }
 // pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrences(vector<uint64_t> phrase)
@@ -539,33 +560,6 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
 //     }
 //     return make_pair(positions, size);
 // }
-
-pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrences(vector<uint64_t> phrase)
-{
-    // stringstream phrase_(phrase);
-    // string word;
-    vector<uint64_t> *positions = new vector<uint64_t>;
-    uint64_t low_occ_word_index = 0, occ = text_size, rank_aux, i = 0, pos = 1, max_pos;
-    
-    // while(getline(phrase_, word, ' '))
-    for(uint64_t word: phrase)
-    {   
-        rank_aux = rank(word, text_size);
-        if(rank_aux < occ)
-        {
-            low_occ_word_index = i;
-            max_pos = rank_aux;
-        } 
-        i++;
-    }
-
-    // O(min inverted index)
-    while(pos <= max_pos){
-
-    }
-
-    return make_pair(positions, 0);
-}
 
 uint64_t Alphabet_Partitioning::get_text_size()
 {

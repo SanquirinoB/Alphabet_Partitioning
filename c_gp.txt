@@ -1,19 +1,31 @@
 # Get Phrases
-### EN PROCESO
 g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_phrase_occ.cpp -o out/gpe3 -lsdsl -ldivsufsort -ldivsufsort64
-text/english_3(1).txt
+tmp/eng_3_size_9225123.txt
 alphabets/english_alphabet.txt
-e3
-g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_phrase_occ.cpp -o out/gpe3 -lsdsl -ldivsufsort -ldivsufsort64
-text/english_4(1).txt
+eng_3
+
+## PROCESO
+g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_phrase_occ.cpp -o out/gpe4 -lsdsl -ldivsufsort -ldivsufsort64
+tmp/eng_4_size_2306280.txt
 alphabets/english_alphabet.txt
-e4
-g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_phrase_occ.cpp -o out/gpp3 -lsdsl -ldivsufsort -ldivsufsort64
-text/proteins_3(1).txt
-alphabets/proteins_alphabet.txt
-p3
-### EN PROCESO
-g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_phrase_occ.cpp -o out/gpp4 -lsdsl -ldivsufsort -ldivsufsort64
-text/proteins_4(1).txt
-alphabets/proteins_alphabet.txt
-p4
+eng_4
+
+# Get Word
+g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_word_occ.cpp -o out/gwe3 -lsdsl -ldivsufsort -ldivsufsort64
+tmp/eng_3_size_9225123.txt
+alphabets/english_alphabet.txt
+eng_3
+g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_word_occ.cpp -o out/gwe4 -lsdsl -ldivsufsort -ldivsufsort64
+tmp/eng_4_size_2306280.txt
+alphabets/english_alphabet.txt
+eng_4
+
+# Get Snippet
+g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_snippet.cpp -o out/gse3 -lsdsl -ldivsufsort -ldivsufsort64
+tmp/eng_3_size_9225123.txt
+alphabets/english_alphabet.txt
+eng_3
+g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib get_snippet.cpp -o out/gse4 -lsdsl -ldivsufsort -ldivsufsort64
+tmp/eng_4_size_2306280.txt
+alphabets/english_alphabet.txt
+eng_4
