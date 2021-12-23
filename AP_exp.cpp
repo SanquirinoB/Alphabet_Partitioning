@@ -102,6 +102,10 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, st
     //  Computamos el logaritmo base 2 del tamanio del alfabeto
     uint64_t log2_sigma = floor_log2(alphabet_size);
 
+    cout << "(!) Alfabeto de tamano: " << alphabet_size << endl;
+    cout << "(!) Alfabeto de tamano log: " << log2_sigma << endl;
+    
+
     // Definicion de F
     //  Definimos  nuestro vector de pares [(int) frecuencia, (int) caracter]
     vector<pair<uint64_t, uint64_t>> *F = new vector<pair<uint64_t, uint64_t>>;
@@ -119,17 +123,18 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, st
     while(getline(text, word, delimiter)) (*F)[stoul(word) - 1].first += 1;
     text.clear();
     text.seekg(0);
+
     //  Ordenamos el alfabeto por frecuencia en orden descendente
     sort((*F).rbegin(), (*F).rend());
     cout << "   (1/3) Palabras recuperadas y ordenadas" << endl;
 
     // Definicion de N
     //  Arreglo de enteros, del tamanio del logaritmo base 2 del tamanio del alfabeto
-    uint64_t N[log2_sigma + 1];
+    size_L = new uint64_t[log2_sigma + 1];
 
     // Inicializacion de N
     //  Se setean todos sus valores a 0
-    for(uint64_t l = 0; l <= log2_sigma; l++) N[l] = 0;
+    for(uint64_t l = 0; l <= log2_sigma; l++) size_L[l] = 0;
 
     // Definicion de val_C
     //  Vector de enteros, del tamanio del alfabeto.
@@ -146,9 +151,14 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, st
         // Para su posicion en val_C, le asignamos su clase (puede haber error aqui)
         val_C[(*F)[j-1].second - 1] = l;
         // Incrementamos el tamanio de la clase l en la frecuencia del caracter asociado
-        N[l] += (*F)[j-1].first;
+        size_L[l] += (*F)[j-1].first;
     }
     cout << "   (2/3) Conversionadas a sus clases" << endl;
+
+    for(int i = 0; i <= log2_sigma; i++)
+    {
+        cout << "Clase " << i << " tiene tamaño " << size_L[i] << endl;
+    }
 
     // Eliminacion de F
     delete F;
@@ -164,7 +174,6 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, st
     //  En cada elemento almacenamos un arreglo de int con la ocurrencia de caada caracter
     //  segun su clase
     vector<int_vector<64>> val_L;
-    size_L = N;
 
     // Inicializacion de val_L
     //  Dentro del alfabeto [0, log2_sigma] (clases posibles)
@@ -173,9 +182,9 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, st
     {
         // Asociamos el arreglo al arreglo de punteros val_L
         //      (!) Optimizacion levemente inutil, pero asi no guardamos referencia a clases vacias
-        val_L.push_back(int_vector<64>(N[l], 1));
+        val_L.push_back(int_vector<64>(size_L[l], 1));
         // Definimos el tamanio de la clase l como 0 (limpiamos)
-        N[l] = 0;
+        size_L[l] = 0;
     }
 
     // Deficion val_K
@@ -193,10 +202,10 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, st
         // Reescribimos text[i] como la clase de i
         val_K[i] = l;
         // Avanzamos en el elemento de la clase l leido
-        N[l] += 1;
+        size_L[l] += 1;
         // Para el L de la clase l, accedemos al elemento de la clase en la que vamos
         // y renumeramos text[i] en el marco del alfabeto de la clase.
-        val_L[l][N[l] - 1] = uint64_t(C.rank(stoul(word) + 1, l));
+        val_L[l][size_L[l] - 1] = uint64_t(C.rank(stoul(word) + 1, l));
 
         i++;
     }
@@ -365,8 +374,13 @@ uint64_t Alphabet_Partitioning::rank(uint64_t word, uint64_t i)
 {
     //uint64_t w_int = to_int(word);
     uint64_t l = C[word];
+    // cout << " (RANK) Clase: " << l << endl;
     uint64_t m = C.rank(word + 1, l);
+    // cout << " (RANK) Occ de la clase nro en C: " << m << endl;
     uint64_t k = K.rank(i + 1, l);
+    // cout << " (RANK) Occ de la clase nro en K: " << k << endl;
+    // cout << " (RANK) Dentro de l soy el nro: " << L[l].rank(k + 1, m) << endl;
+    // cout << " (RANK) L de tamano: " << size_L[l] << endl;
     return L[l].rank(k + 1, m);
 }
 uint64_t Alphabet_Partitioning::select(uint64_t word, uint64_t i)
@@ -464,6 +478,7 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
             offset_min = offset; 
             word_min = word;
         }
+        if(r == 0) return make_pair(positions, 0);
         offset++;
         l++;
     }
@@ -475,22 +490,25 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
         pos_end_phrase = pos_word_min + l - offset_min;
         pos_begin_phrase = pos_word_min - offset_min + 1;
         offset = 0;
-        cout << "   Posicion inicial de frase: " << pos_begin_phrase << endl;
-        cout << "   Posicion final de frase: " << pos_end_phrase << endl;
-        cout << "   Posicion palabra min: " << pos_word_min << endl;
+        // cout << "   Posicion inicial de frase: " << pos_begin_phrase << endl;
+        // cout << "   Posicion final de frase: " << pos_end_phrase << endl;
+        // cout << "   Posicion palabra min: " << pos_word_min << endl;
 
         for(uint64_t word:phrase)
         {
-            cout << "       (!) Palabra: " << word << endl;
+            // cout << "       (!) Palabra: " << word << endl;
             i_last_occ = rank(word, pos_end_phrase);
+            // Si no hay ocurrencias
+            if(i_last_occ == 0) break;
             pos_word_i = select(word,i_last_occ);
-            cout << "       Posicion de palabra: " << pos_word_i << endl;
-            cout << "       Offset de palabra: " << offset << endl;
-            cout << "       Dd espero: " << (pos_begin_phrase + offset) << endl;
+            // cout << "       Posicion de palabra: " << pos_word_i << endl;
+            // cout << "       Offset de palabra: " << offset << endl;
+            // cout << "       Dd espero: " << (pos_begin_phrase + offset) << endl;
+            // Si la ocurrencia no es en la posicion deseada
             if(pos_word_i != (pos_begin_phrase + offset)) break;
             offset++;
         }
-        cout << "OFFSET: " << offset << "L: " << l << endl;
+        // cout << "OFFSET: " << offset << "L: " << l << endl;
         if(offset == l)
         {
             (*positions).push_back(pos_begin_phrase);
@@ -500,66 +518,6 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
 
     return make_pair(positions, n_occ);
 }
-// pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrences(vector<uint64_t> phrase)
-// {
-//     // stringstream phrase_(phrase);
-//     // string word;
-//     uint64_t n = 0;
-//     uint64_t offset = 1;
-//     vector<uint64_t> *positions = new vector<uint64_t>;
-//     vector<vector<uint64_t>> words_pos;
-//     vector<uint64_t> word_pos_size;
-//     uint64_t last_found = 0;
-//     uint64_t size = 0;
-    
-//     // while(getline(phrase_, word, ' '))
-//     for(uint64_t word: phrase)
-//     {
-//         pair<vector<uint64_t>*, uint64_t> result = get_all_word_ocurrences(word);
-//         words_pos.push_back((*result.first));
-//         word_pos_size.push_back(rank(word, text_size));
-//         n++;
-//     }
-//     // Por cada posicion de la primera palabra
-//     for(uint64_t i = 0; i < word_pos_size[0] ; i++)
-//     {
-//         // Por cada palabra en la frase
-//         for(uint64_t w_i = 1; w_i < n ; w_i++)
-//         {
-//             // Por cada posicion de esa palabra
-//             for(uint64_t j = 0; j < word_pos_size[w_i] ; j++)
-//             {
-//                 if(words_pos[w_i][j] <= last_found + 1) continue;
-//                 // Si la palabra ocurre 
-//                 if(words_pos[w_i][j] == words_pos[0][i] + offset)
-//                 {
-//                     // Si termine de leer la frase
-//                     if(offset == n - 1){
-//                         // Guardo la posicion
-//                         (*positions).push_back(words_pos[0][i]);
-//                         size++;
-//                         last_found = words_pos[0][i];
-//                         offset = n + 1;
-//                     } else {
-//                         // Si no termine la frase, sigo con la siguiente palabra
-//                         offset++;
-//                     }
-//                     break;
-//                 // Si las ocurrencias ya exceden la posicion buscada, dejamos de buscar la frase para i
-//                 } else if (words_pos[w_i][j] > words_pos[0][i] + offset){
-//                     // Con esto simbolizamos que la frase ya no funciono
-//                     offset = n + 1;
-//                     last_found = words_pos[0][i];
-//                     break;
-//                 }
-//             }
-//             // Si ya encontre la frase o la frase ya no funciono para i, seguimos
-//             if(offset == n + 1) break;
-//         }
-//         offset = 1;
-//     }
-//     return make_pair(positions, size);
-// }
 
 uint64_t Alphabet_Partitioning::get_text_size()
 {

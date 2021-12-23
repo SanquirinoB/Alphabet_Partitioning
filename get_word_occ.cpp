@@ -27,7 +27,7 @@ int main(){
     time_t end;
     int count = 0;
     pair<vector<uint64_t>*, uint64_t> ans;
-    results << "word\toccurences\ttime\n";
+    results << "occurences\ttime\n";
 
     cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
 
@@ -36,7 +36,7 @@ int main(){
         begin = clock();
         ans = ap.get_all_word_ocurrences(word);
         end = clock();
-        results << word << "\t" << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
+        results << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
 
     results.close();
@@ -44,17 +44,16 @@ int main(){
     cout << "   Terminado!!" << endl;
 
     results.open("results_new/get_all_word_occurrences/sii_gawo_" + id + ".csv");
-    results << "word\toccurences\ttime\n";
+    results << "occurences\ttime\n";
 
     cout << "Inicia el proceso de Simple_II..." << endl;
 
     for(uint64_t word = 1; word <= 418038; word++)
     {
-        word_str = std::to_string(word);
         begin = clock();
-        ans = sii.get_all_word_ocurrences(word_str);
+        ans = sii.get_all_word_ocurrences(word);
         end = clock();
-        results << word << "\t" << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
+        results << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
     results.close();
 

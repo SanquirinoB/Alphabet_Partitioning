@@ -32,27 +32,25 @@ int main(){
     ifstream phrases;
     phrases.open("tmp/" + id + "_phrases.txt");
     string phrase, word;
+    uint64_t p_len = 0;
 
     cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
 
     while(getline(phrases, phrase))
     {
-        cout << "a" << endl;
         stringstream s_line(phrase);
-        cout << "b" << endl;
         while(getline(s_line, word, '/'))
         {
             p->push_back(stoul(word));
+            p_len++;
         }
-        for(uint64_t wea:(*p)){cout << wea << endl;}
-        cout << "c" << endl;
+
         begin = clock();
         ans = ap.get_all_phrase_ocurrences(*p);
         end = clock();
-        results << phrase.length() << "\t" << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
-        cout << "d" << endl;
+        results << p_len << "\t" << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
         p->clear();
-        cout << "e" << endl;
+        p_len = 0;
     }
     phrases.clear();
     phrases.seekg(0);
@@ -71,12 +69,14 @@ int main(){
         while(getline(s_line, word, '/'))
         {
             p->push_back(stoul(word));
+            p_len++;
         }
         begin = clock();
-        ans = sii.get_all_phrase_ocurrences(phrase);
+        ans = sii.get_all_phrase_ocurrences(*p);
         end = clock();
-        results << phrase.length() << "\t" << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
+        results << p_len << "\t" << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
         p->clear();
+        p_len = 0;
     }
 
     phrases.close();

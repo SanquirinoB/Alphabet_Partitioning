@@ -11,7 +11,7 @@ class Simple_II {
 private:
     string text_path;
     ifstream text;
-    vector<string> tokenized_text;
+    vector<uint64_t> tokenized_text;
     uint64_t text_size = 0;
 
 public:
@@ -19,11 +19,11 @@ public:
     // Tokenizamos el texto completo y guardamos en memoria
     void process_text();
     // Retorna un fragmento del texto entre las posiciones [start, end] 
-    string get_snippet(uint64_t start, uint64_t end);
+    uint64_t get_snippet(uint64_t start, uint64_t end);
     // Retorna un vector de las posiciones donde ocurre la palabra (word) y la cantidad de ocurrencias
-    pair<vector<uint64_t>*, uint64_t> get_all_word_ocurrences(string word);
+    pair<vector<uint64_t>*, uint64_t> get_all_word_ocurrences(uint64_t word);
     // Retorna un vector de las posiciones donde ocurre la palabra (word)
-    pair<vector<uint64_t>*, uint64_t> get_all_phrase_ocurrences(string phrase);
+    pair<vector<uint64_t>*, uint64_t> get_all_phrase_ocurrences(vector<uint64_t> phrase);
 
     uint64_t get_text_size();
 };
@@ -44,26 +44,25 @@ void Simple_II::process_text(){
     // Por cada linea, recuperamos palabras separadas por espacio
     while(getline(text, word, '/')){
         // Guardamos la palabra en memoria
-        tokenized_text.push_back(word);
+        tokenized_text.push_back(stoul(word));
         text_size++;
     }
 }
 
-string Simple_II::get_snippet(uint64_t start, uint64_t end){
-    string snippet = tokenized_text[start];
+uint64_t Simple_II::get_snippet(uint64_t start, uint64_t end){
+    uint64_t snippet = tokenized_text[start];
     for(uint64_t i = start + 1; i <= end; i++){
-        snippet += " ";
         snippet += tokenized_text[i];
     }
 
     return snippet;
 }
 
-pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_word_ocurrences(string word){
+pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_word_ocurrences(uint64_t word){
     vector<uint64_t> *positions = new vector<uint64_t>;
     uint64_t size = 0;
     for (uint64_t i = 0; i < text_size; i++){
-        if (tokenized_text[i].compare(word) == 0){
+        if (tokenized_text[i] == word){
             (*positions).push_back(i);
             size ++;
         }
@@ -71,9 +70,7 @@ pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_word_ocurrences(string word
     return make_pair(positions, size);
 }
 
-pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(string phrase){
-    stringstream phrase_(phrase);
-    string word;
+pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(vector<uint64_t> phrase){
     uint64_t n = 0;
     uint64_t offset = 1;
     vector<uint64_t> *positions = new vector<uint64_t>;
@@ -82,7 +79,7 @@ pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(string ph
     uint64_t last_found = 0;
     uint64_t size = 0;
     
-    while(getline(phrase_, word, ' '))
+    for(uint64_t word:phrase)
     {
         pair<vector<uint64_t>*, uint64_t> pair_found = get_all_word_ocurrences(word);
         words_pos.push_back((*pair_found.first));
