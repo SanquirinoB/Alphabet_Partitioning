@@ -72,57 +72,62 @@ pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_word_ocurrences(uint64_t wo
 
 pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(vector<uint64_t> phrase){
     uint64_t n = 0;
-    uint64_t offset = 1;
     vector<uint64_t> *positions = new vector<uint64_t>;
-    vector<vector<uint64_t>> words_pos;
-    vector<uint64_t> word_pos_size;
-    uint64_t last_found = 0;
+    vector<vector<uint64_t>> *words_pos = new vector<vector<uint64_t>>;
+    vector<uint64_t> *word_pos_size = new vector<uint64_t>;
     uint64_t size = 0;
-    
+
+    uint64_t min_occ = text_size, min_aux = 0, offset_min = 0;
+    pair<vector<uint64_t>*, uint64_t> pair_found;
     for(uint64_t word:phrase)
     {
-        pair<vector<uint64_t>*, uint64_t> pair_found = get_all_word_ocurrences(word);
-        words_pos.push_back((*pair_found.first));
-        word_pos_size.push_back(pair_found.second);
+        pair_found = get_all_word_ocurrences(word);
+        words_pos->push_back(*pair_found.first);
+        word_pos_size->push_back(pair_found.second);
+        if (pair_found.second < min_occ)
+        {
+            min_occ = pair_found.second;
+            offset_min = n;
+        }
         n++;
     }
+    uint64_t pos_f_i = 0, pos_f_e = 0;
+    bool has_failed = false;
     // Por cada posicion de la primera palabra
-    for(uint64_t i = 0; i < word_pos_size[0] ; i++)
-    {
+    for(uint64_t i = 0; i < min_occ ; i++)
+    {   
+        pos_f_i = (*words_pos)[offset_min][i] - offset_min;
+        pos_f_e = (*words_pos)[offset_min][i] + n - offset_min - 1;
         // Por cada palabra en la frase
-        for(uint64_t w_i = 1; w_i < n ; w_i++)
+        for(uint64_t w_i = 0; w_i < n ; w_i++)
         {
+            if (w_i == offset_min) continue;
             // Por cada posicion de esa palabra
-            for(uint64_t j = 0; j < word_pos_size[w_i] ; j++)
+            for(uint64_t j = 0; j < (*word_pos_size)[w_i] ; j++)
             {
-                if(words_pos[w_i][j] <= last_found + 1) continue;
-                // Si la palabra ocurre 
-                if(words_pos[w_i][j] == words_pos[0][i] + offset)
+                // Posicion ocurre antes del inicio de la frase, saltamos
+                if((*words_pos)[w_i][j] < pos_f_i)
                 {
-                    // Si termine de leer la frase
-                    if(offset == n - 1){
-                        // Guardo la posicion
-                        (*positions).push_back(words_pos[0][i]);
-                        size ++;
-                        last_found = words_pos[0][i];
-                        offset = n + 1;
-                    } else {
-                        // Si no termine la frase, sigo con la siguiente palabra
-                        offset++;
-                    }
+                    continue;
+                 // Si la posicion esta despues del final, se acaba
+                }else if(pos_f_e < (*words_pos)[w_i][j])
+                {
+                    // cout << "   (!) La palabra fallo" << endl;
+                    has_failed = true;
                     break;
-                // Si las ocurrencias ya exceden la posicion buscada, dejamos de buscar la frase para i
-                } else if (words_pos[w_i][j] > words_pos[0][i] + offset){
-                    // Con esto simbolizamos que la frase ya no funciono
-                    offset = n + 1;
-                    last_found = words_pos[0][i];
+                // Pero si esta donde queremos, sgte palabra
+                } else if((*words_pos)[w_i][j] == pos_f_i + w_i) {
+                    if(w_i == n - 1){
+                        positions->push_back(pos_f_i);
+                        size++;
+                    }
                     break;
                 }
             }
-            // Si ya encontre la frase o la frase ya no funciono para i, seguimos
-            if(offset == n + 1) break;
+            // Si falla una sola palabra para la posicion, pasamos al sgte i
+            if(has_failed) break;            
         }
-        offset = 1;
+        has_failed = false;
     }
     return make_pair(positions, size);
 }

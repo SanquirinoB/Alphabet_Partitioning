@@ -478,10 +478,17 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
             offset_min = offset; 
             word_min = word;
         }
-        if(r == 0) return make_pair(positions, 0);
+        if(r == 0)
+        {
+            cout << "[GAPO] (!!) WARNING: Palabra " << word << " sin ocurrencias." << endl; 
+            return make_pair(positions, 0);
+        }
         offset++;
         l++;
     }
+    // cout << "  Palabra min: " << word_min << endl;
+    // cout << "  offset min: " << offset_min << endl;
+    // cout << "  occ min: " << offset_min << endl;
 
     uint64_t pos_end_phrase = 0, i_last_occ = 0, pos_word_i = 0, pos_word_min = 0, pos_begin_phrase = 0;
     for(uint64_t i_word_min = 1; i_word_min <= min_occ; i_word_min++)
@@ -497,23 +504,29 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
         for(uint64_t word:phrase)
         {
             // cout << "       (!) Palabra: " << word << endl;
-            i_last_occ = rank(word, pos_end_phrase);
+            i_last_occ = rank(word, pos_begin_phrase + offset);
             // Si no hay ocurrencias
             if(i_last_occ == 0) break;
             pos_word_i = select(word,i_last_occ);
             // cout << "       Posicion de palabra: " << pos_word_i << endl;
             // cout << "       Offset de palabra: " << offset << endl;
             // cout << "       Dd espero: " << (pos_begin_phrase + offset) << endl;
+            // sleep(1);
+            
             // Si la ocurrencia no es en la posicion deseada
-            if(pos_word_i != (pos_begin_phrase + offset)) break;
+            if(pos_word_i != (pos_begin_phrase + offset))
+            {   
+                break;
+            } else {
+                if(offset == l-1)
+                {
+                    (*positions).push_back(pos_begin_phrase);
+                    n_occ++;
+                }
+            }
             offset++;
         }
-        // cout << "OFFSET: " << offset << "L: " << l << endl;
-        if(offset == l)
-        {
-            (*positions).push_back(pos_begin_phrase);
-            n_occ++;
-        }
+        // cout << "OFFSET: " << offset << " L: " << l << endl;
     }
 
     return make_pair(positions, n_occ);

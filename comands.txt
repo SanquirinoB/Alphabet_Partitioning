@@ -21,3 +21,29 @@ tmp/eng_4_size_2306280.txt
 alphabets/english_alphabet.txt
 eng_4
 
+Busco una frase de 2 palabras
+   Encontrada en 0 segundos con 3 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.046875 segundos con 6 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.03125 segundos con 6 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.03125 segundos con 2 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.015625 segundos con 23 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.015625 segundos con 14 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.03125 segundos con 1 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.203125 segundos con 168 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 65.6562 segundos con 81440 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.03125 segundos con 1 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.0625 segundos con 10 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 2.9375 segundos con 3490 ocurrencias
+Busco una frase de 2 palabras
+   Encontrada en 0.25 segundos con 76 ocurrencias

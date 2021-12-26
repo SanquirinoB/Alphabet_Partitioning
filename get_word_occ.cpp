@@ -15,9 +15,9 @@ int main(){
     cin >> id;
 
     cout << "[Alphabet_Partitioning]" << endl;
-    Alphabet_Partitioning ap(text_path, stoul(size), alph_path, id, false, false);
+    Alphabet_Partitioning *ap = new Alphabet_Partitioning(text_path, stoul(size), alph_path, id, false, false);
     cout << "[Simple_II]" << endl;
-    Simple_II sii(text_path);
+    Simple_II *sii = new Simple_II(text_path);
 
     ofstream results;
     results.open("results_new/get_all_word_occurrences/ap_gawo_" + id + ".csv");
@@ -34,12 +34,15 @@ int main(){
     for(uint64_t word = 1; word <= 418038; word++)
     {
         begin = clock();
-        ans = ap.get_all_word_ocurrences(word);
+        ans = ap->get_all_word_ocurrences(word);
         end = clock();
         results << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
 
     results.close();
+    cout << "   Experimentacion finalizada!" << endl;
+    cout << "   Liberando memoria..." << endl;
+    delete ap;
 
     cout << "   Terminado!!" << endl;
 
@@ -51,7 +54,7 @@ int main(){
     for(uint64_t word = 1; word <= 418038; word++)
     {
         begin = clock();
-        ans = sii.get_all_word_ocurrences(word);
+        ans = sii->get_all_word_ocurrences(word);
         end = clock();
         results << ans.second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }

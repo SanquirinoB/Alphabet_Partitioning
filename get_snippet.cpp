@@ -16,10 +16,10 @@ int main(){
     cin >> id;
 
     cout << "[Alphabet_Partitioning]" << endl;
-    Alphabet_Partitioning ap(text_path, stoul(size), alph_path, id, false, false);
-    uint64_t ap_size = ap.get_text_size();
+    Alphabet_Partitioning *ap = new Alphabet_Partitioning(text_path, stoul(size), alph_path, id, false, false);
+    uint64_t ap_size = ap->get_text_size();
     cout << "[Simple_II]" << endl;
-    Simple_II sii(text_path);
+    Simple_II *sii = new Simple_II(text_path);
 
     ofstream results;
     results.open("results_new/get_snippet/ap_gs_" + id + ".csv");
@@ -52,12 +52,17 @@ int main(){
     for(uint64_t i = 0; i < n; i++)
     {
         begin = clock();
-        ans = ap.get_snippet(pairs[i].first, pairs[i].second);
+        ans = ap->get_snippet(pairs[i].first, pairs[i].second);
         end = clock();
         results << (pairs[i].second - pairs[i].first) << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
 
     results.close();
+
+    cout << "   Experimentacion finalizada!" << endl;
+    cout << "   Liberando memoria..." << endl;
+    delete ap;
+    
     cout << "   Terminado!!" << endl;
 
     results.open("results_new/get_snippet/sii_gs_" + id + ".csv");
@@ -68,7 +73,7 @@ int main(){
     for(uint64_t i = 0; i < n; i++)
     {
         begin = clock();
-        ans = sii.get_snippet(pairs[i].first, pairs[i].second);
+        ans = sii->get_snippet(pairs[i].first, pairs[i].second);
         end = clock();
         results << (pairs[i].second - pairs[i].first) << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
     }
