@@ -71,7 +71,7 @@ pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_word_ocurrences(uint64_t wo
 }
 
 pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(vector<uint64_t> phrase){
-    uint64_t n = 0;
+    uint64_t n = 0, word_min;
     vector<uint64_t> *positions = new vector<uint64_t>;
     vector<vector<uint64_t>> *words_pos = new vector<vector<uint64_t>>;
     vector<uint64_t> *word_pos_size = new vector<uint64_t>;
@@ -88,9 +88,15 @@ pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(vector<ui
         {
             min_occ = pair_found.second;
             offset_min = n;
+            word_min = word;
         }
         n++;
     }
+
+    // cout << "  Palabra min: " << word_min << endl;
+    // cout << "  offset min: " << offset_min << endl;
+    // cout << "  occ min: " << min_occ << endl;
+
     uint64_t pos_f_i = 0, pos_f_e = 0;
     bool has_failed = false;
     // Por cada posicion de la primera palabra
@@ -98,10 +104,12 @@ pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(vector<ui
     {   
         pos_f_i = (*words_pos)[offset_min][i] - offset_min;
         pos_f_e = (*words_pos)[offset_min][i] + n - offset_min - 1;
+        // cout << "   Posicion inicial de frase: " << pos_f_i << endl;
+        // cout << "   Posicion final de frase: " << pos_f_e << endl;
+        // cout << "   Posicion palabra min: " << (*words_pos)[offset_min][i] << endl;
         // Por cada palabra en la frase
         for(uint64_t w_i = 0; w_i < n ; w_i++)
-        {
-            if (w_i == offset_min) continue;
+        {   
             // Por cada posicion de esa palabra
             for(uint64_t j = 0; j < (*word_pos_size)[w_i] ; j++)
             {
@@ -110,19 +118,26 @@ pair<vector<uint64_t>*, uint64_t> Simple_II::get_all_phrase_ocurrences(vector<ui
                 {
                     continue;
                  // Si la posicion esta despues del final, se acaba
-                }else if(pos_f_e < (*words_pos)[w_i][j])
-                {
-                    // cout << "   (!) La palabra fallo" << endl;
-                    has_failed = true;
-                    break;
-                // Pero si esta donde queremos, sgte palabra
-                } else if((*words_pos)[w_i][j] == pos_f_i + w_i) {
+                }
+                // cout << "       Posicion de palabra: " << (*words_pos)[w_i][j] << endl;
+                // cout << "       Offset de palabra: " << w_i << endl;
+                // cout << "       Dd espero: " << (pos_f_i + w_i) << endl;
+                // sleep(1);
+                
+                if((*words_pos)[w_i][j] == pos_f_i + w_i) {
                     if(w_i == n - 1){
                         positions->push_back(pos_f_i);
                         size++;
                     }
                     break;
                 }
+                if(pos_f_e < (*words_pos)[w_i][j])
+                {
+                    // cout << "   (!) La palabra fallo" << endl;
+                    has_failed = true;
+                    break;
+                // Pero si esta donde queremos, sgte palabra
+                } 
             }
             // Si falla una sola palabra para la posicion, pasamos al sgte i
             if(has_failed) break;            

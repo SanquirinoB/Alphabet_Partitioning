@@ -155,10 +155,10 @@ Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, st
     }
     cout << "   (2/3) Conversionadas a sus clases" << endl;
 
-    for(int i = 0; i <= log2_sigma; i++)
-    {
-        cout << "Clase " << i << " tiene tamaño " << size_L[i] << endl;
-    }
+    // for(int i = 0; i <= log2_sigma; i++)
+    // {
+    //     cout << "Clase " << i << " tiene tamaño " << size_L[i] << endl;
+    // }
 
     // Eliminacion de F
     delete F;
