@@ -497,6 +497,8 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
         pos_end_phrase = pos_word_min + l - offset_min;
         pos_begin_phrase = pos_word_min - offset_min + 1;
         offset = 0;
+
+        if(pos_end_phrase > text_size) break;
         // cout << "   Posicion inicial de frase: " << pos_begin_phrase << endl;
         // cout << "   Posicion final de frase: " << pos_end_phrase << endl;
         // cout << "   Posicion palabra min: " << pos_word_min << endl;
