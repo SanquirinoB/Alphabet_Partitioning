@@ -19,15 +19,11 @@ class Alphabet_Partitioning {
     vector<wt_gmr<>> L ;
     uint64_t* size_L;
 
-    // Ayudas de implementacion para experimentar
-    string curr_word;
-    uint64_t curr_code;
     // Alfabeto a utilizar
     // Por ahora toleraremos solo alfabeto definido por ASCII imprimibles
     // [32, 126] -> [1, 95]
     string alphabet_path = "alphabets/default.txt";
     string tmp_text_path = "tmp/tmp_text_";
-    vector<uint64_t> alphabet_word_reference;
     
     uint64_t alphabet_size;
     uint64_t text_size;
@@ -68,8 +64,10 @@ class Alphabet_Partitioning {
     pair<vector<uint64_t>*, uint64_t> get_all_word_ocurrences(uint64_t word);
     // Retorna un vector de las posiciones donde ocurre la palabra (word)
     pair<vector<uint64_t>*, uint64_t> get_all_phrase_ocurrences(vector<uint64_t> phrase);
-
+    // Cantidad de palabras del texto
     uint64_t get_text_size();
+    // Byte size de la estructura
+    uint64_t size();
 };
 
 Alphabet_Partitioning::Alphabet_Partitioning(string text_path, uint64_t size, string index)
@@ -244,54 +242,52 @@ void Alphabet_Partitioning::Identify_alphabet(string alph_path){
     // TODO: manejo de error en casao de no abrirse
     while(getline(alphabet_access, line))
     {
-        alphabet_word_reference.push_back(buffer);
         buffer += line.size() + 1;
         alphabet_size++;
     }
-    alphabet_word_reference.push_back(buffer);
     alphabet_access.clear();
     alphabet_access.seekg(0);
 }
 
 uint64_t Alphabet_Partitioning::BS_over_alphabet(string word){
-    uint64_t first = 0;
-    uint64_t last = alphabet_size - 1;
-    uint64_t middle = floor((first + last)/2);
-    string line;
-    int status;
+    // uint64_t first = 0;
+    // uint64_t last = alphabet_size - 1;
+    // uint64_t middle = floor((first + last)/2);
+    // string line;
+    // int status;
 
-    if(!alphabet_access.is_open()){
-        cout << "(!!!) [BS_over_alphabet] Error: No se encuentra el alfabeto especificado" << endl;
-        exit(1);
-    }
-    //cout << "Busco la palabra: " << word << endl;
+    // if(!alphabet_access.is_open()){
+    //     cout << "(!!!) [BS_over_alphabet] Error: No se encuentra el alfabeto especificado" << endl;
+    //     exit(1);
+    // }
+    // //cout << "Busco la palabra: " << word << endl;
 
-    while(first <= last){
-        alphabet_access.seekg(alphabet_word_reference[middle]);
-        getline(alphabet_access, line);
-        //cout << "   Comparo contra la palabra: " << line << endl;
-        status = line.compare(word); 
-        if(status < 0){
-            //cout << "       Me voy a la z" << endl;
-            first = middle + 1;
-        } else if (status == 0){
-            //cout << "       (!) Retorno " << (middle + 1) <<  endl;
-            return middle + 1;
-        } else {
-            //cout << "       Me voy a la a" << endl;
-            last = middle - 1;
-        }
+    // while(first <= last){
+    //     alphabet_access.seekg(alphabet_word_reference[middle]);
+    //     getline(alphabet_access, line);
+    //     //cout << "   Comparo contra la palabra: " << line << endl;
+    //     status = line.compare(word); 
+    //     if(status < 0){
+    //         //cout << "       Me voy a la z" << endl;
+    //         first = middle + 1;
+    //     } else if (status == 0){
+    //         //cout << "       (!) Retorno " << (middle + 1) <<  endl;
+    //         return middle + 1;
+    //     } else {
+    //         //cout << "       Me voy a la a" << endl;
+    //         last = middle - 1;
+    //     }
 
-        middle = floor((first + last)/2);
-    }
+    //     middle = floor((first + last)/2);
+    // }
 
-    if(first > last) {
-        cout << "(!) [BS_over_alphabet] Error: Palabra no encontrada. Por favor verifique que el alfabeto contenga todas las palabras posibles" << endl;
-        cout << "       (?) Palabra desconocida:" << word << endl;
-        exit(1);
-    }
-    alphabet_access.clear();
-    alphabet_access.seekg(0);
+    // if(first > last) {
+    //     cout << "(!) [BS_over_alphabet] Error: Palabra no encontrada. Por favor verifique que el alfabeto contenga todas las palabras posibles" << endl;
+    //     cout << "       (?) Palabra desconocida:" << word << endl;
+    //     exit(1);
+    // }
+    // alphabet_access.clear();
+    // alphabet_access.seekg(0);
     return 0;
 }
 
@@ -308,14 +304,14 @@ uint64_t Alphabet_Partitioning::to_int(string word){
 string Alphabet_Partitioning::to_string(uint64_t i){
 
     string word;
-    if(!alphabet_access.is_open()){
-        cout << "(!!!) [to_string] Error: No se encuentra el alfabeto especificado" << endl;
-        exit(1);
-    }
-    alphabet_access.seekg(alphabet_word_reference[i - 1]);
-    getline(alphabet_access, word);
-    alphabet_access.clear();
-    alphabet_access.seekg(0);
+    // if(!alphabet_access.is_open()){
+    //     cout << "(!!!) [to_string] Error: No se encuentra el alfabeto especificado" << endl;
+    //     exit(1);
+    // }
+    // alphabet_access.seekg(alphabet_word_reference[i - 1]);
+    // getline(alphabet_access, word);
+    // alphabet_access.clear();
+    // alphabet_access.seekg(0);
     return word;
 }
 
@@ -505,18 +501,8 @@ pair<vector<uint64_t>*, uint64_t> Alphabet_Partitioning::get_all_phrase_ocurrenc
 
         for(uint64_t word:phrase)
         {
-            // cout << "       (!) Palabra: " << word << endl;
-            i_last_occ = rank(word, pos_begin_phrase + offset);
-            // Si no hay ocurrencias
-            if(i_last_occ == 0) break;
-            pos_word_i = select(word,i_last_occ);
-            // cout << "       Posicion de palabra: " << pos_word_i << endl;
-            // cout << "       Offset de palabra: " << offset << endl;
-            // cout << "       Dd espero: " << (pos_begin_phrase + offset) << endl;
-            // sleep(1);
-            
-            // Si la ocurrencia no es en la posicion deseada
-            if(pos_word_i != (pos_begin_phrase + offset))
+            // Si en la posicion deseada no esta nuestra palabra
+            if(word != access(pos_begin_phrase + offset))
             {   
                 break;
             } else {
@@ -539,3 +525,22 @@ uint64_t Alphabet_Partitioning::get_text_size()
     return text_size;
 }
 
+uint64_t Alphabet_Partitioning::size()
+{
+    uint64_t s = 0;
+    uint64_t aux = size_in_bytes(K);
+    cout << "K gasta " << aux << " bytes" << endl;
+    s+= aux;
+    aux = size_in_bytes(C);
+    cout << "C gasta " << aux << " bytes" << endl;
+    s+= aux;
+    for(wt_gmr<> l:L)
+    {
+        aux = size_in_bytes(l);
+        cout << "l gasta " << aux << " bytes" << endl;
+        s+= aux;
+    }
+    // size_l
+    s+= (4*floor_log2(alphabet_size));
+    return s;
+}

@@ -6,14 +6,24 @@
 int main(){
     
     string text_path, alph_path, id, size;
-	cout << "Ingrese el path del archivo a comprimir: ";
-    cin >> text_path;
-    cout << "Ingrese la cantidad de palabras: ";
-    cin >> size;
-    cout << "Ingrese el path del alfabeto a usar: ";
-    cin >> alph_path;
-    cout << "Ingrese el id para resultados: ";
-    cin >> id;
+	// cout << "Ingrese el path del archivo a comprimir: ";
+    // cin >> text_path;
+    // cout << "Ingrese la cantidad de palabras: ";
+    // cin >> size;
+    // cout << "Ingrese el path del alfabeto a usar: ";
+    // cin >> alph_path;
+    // cout << "Ingrese el id para resultados: ";
+    // cin >> id;
+
+    text_path = "tmp/eng_3_size_9225123.txt";
+    alph_path = "alphabets/english_alphabet.txt";
+    id = "eng_3";
+    size = "9225123";
+
+    // text_path = "tmp/eng_4_size_2306280.txt";
+    // alph_path = "alphabets/english_alphabet.txt";
+    // id = "eng_4";
+    // size = "2306280";
 
     cout << "[Alphabet_Partitioning]" << endl;
     Alphabet_Partitioning *ap = new Alphabet_Partitioning(text_path, stoul(size), alph_path, id, false, false);
@@ -22,25 +32,22 @@ int main(){
     Simple_II *sii = new Simple_II(text_path);
 
     ofstream results;
-    results.open("results_new/get_snippet/ap_gs_" + id + ".csv");
+    results.open("results_new/get_snippet/ap_gs_" + id + "_2.csv");
 
     time_t begin;
     time_t end;
     uint64_t ans;
     results << "length\ttime\n";
 
-    double sizes[] = {1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0, 18.5, 19.0, 19.5, 20.0, 20.5, 21.0, 21.5, 22.0, 22.5, 23.0};
+    int sizes[] = {10, 100};
     
     vector<pair<uint64_t, uint64_t>> pairs;
     uint64_t i;
     uint64_t n = 0;
-    for(double div:sizes)
+    for(double l:sizes)
     {   
-        uint64_t l = (uint64_t)(ap_size/pow(2,div));
-        if(pow(2,div) > ap_size | l > 1153140) continue;
-        cout << ap_size << "|" << pow(2,div) << "|" << l << endl;
         uint64_t m = ap_size - l + 1;
-        for(int cosa = 1; cosa <= 10; cosa++)
+        for(int cosa = 1; cosa <= 1000; cosa++)
         {
             i = (uint64_t)(rand() % m) + 1;
             pairs.push_back(make_pair(i,i+l));
@@ -65,7 +72,7 @@ int main(){
     
     cout << "   Terminado!!" << endl;
 
-    results.open("results_new/get_snippet/sii_gs_" + id + ".csv");
+    results.open("results_new/get_snippet/sii_gs_" + id + "_2.csv");
     results << "length\ttime\n";
 
     cout << "Inicia el proceso de Simple_II..." << endl;

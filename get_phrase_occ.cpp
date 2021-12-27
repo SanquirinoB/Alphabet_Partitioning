@@ -4,7 +4,7 @@
 
 int main(){
     
-    string text_path, alph_path, id, size;
+    // string text_path, alph_path, id, size;
 	// cout << "Ingrese el path del archivo a comprimir: ";
     // cin >> text_path;
     // cout << "Ingrese la cantidad de palabras: ";
@@ -26,13 +26,13 @@ int main(){
     uint64_t wea = 1;
     uint64_t ind = 1;
 
-    //phrases.open("tmp/eng_3_phrases.txt");
+    // phrases.open("tmp/eng_4_phrases.txt");
 
     // cout << "[ Inicia ENG_4 ] " << endl << endl;
     // cout << "[Alphabet_Partitioning]" << endl;
     // ap = new Alphabet_Partitioning("tmp/eng_4_size_2306280.txt", 2306280, "alphabets/english_alphabet.txt", "eng_4", false, false);
     
-    // results.open("results_new/get_all_phrase_occurrences/ap_gp_eng_4.csv");
+    // results.open("results_new/get_all_phrase_occurrences/ap_gp_eng_4_2.csv");
 
     // results << "length\toccurences\ttime\n";
 
@@ -60,8 +60,8 @@ int main(){
     //     p->clear();
     //     p_len = 0;
     // }
-    // // phrases.clear();
-    // // phrases.seekg(0);
+    // phrases.clear();
+    // phrases.seekg(0);
     // results.close();
     
     // cout << "   Experimentacion finalizada!" << endl;
@@ -74,7 +74,7 @@ int main(){
     // sii = new Simple_II("tmp/eng_4_size_2306280.txt");
     // cout << "Inicia el proceso de Simple_II..." << endl;
 
-    // results.open("results_new/get_all_phrase_occurrences/sii_gp_eng_4.csv");
+    // results.open("results_new/get_all_phrase_occurrences/sii_gp_eng_4_2.csv");
     // results << "length\toccurences\ttime\n";
     // cout << "length\toccurences\ttime\n";
 
@@ -104,7 +104,7 @@ int main(){
     //     p_len = 0;
     //     ind++;
     //     cout << "   Encontrada en " << (float)(end - begin)/CLOCKS_PER_SEC << " segundos con " << ans->second << " ocurrencias" << endl;
-    //     //results << "   Encontrada en " << (float)(end - begin)/CLOCKS_PER_SEC << " segundos con " << ans->second << " ocurrencias" << endl;
+    //     results << "   Encontrada en " << (float)(end - begin)/CLOCKS_PER_SEC << " segundos con " << ans->second << " ocurrencias" << endl;
     //     cout << "   Limpiamos memoria..." << endl;       
     // }
 
@@ -115,58 +115,57 @@ int main(){
 
     // delete sii;
 
-    // cout << "[ Inicia ENG_3 ] " << endl;
+    cout << "[ Inicia ENG_3 ] " << endl;
 
-    // cout << "[Alphabet_Partitioning]" << endl;
-    // ap = new Alphabet_Partitioning("tmp/eng_3_size_9225123.txt", 9225123, "alphabets/english_alphabet.txt", "eng_3", false, false);
+    cout << "[Alphabet_Partitioning]" << endl;
+    ap = new Alphabet_Partitioning("tmp/eng_3_size_9225123.txt", 9225123, "alphabets/english_alphabet.txt", "eng_3", false, false);
 
-    // results.open("results_new/get_all_phrase_occurrences/ap_gp_eng_3.csv");
+    results.open("results_new/get_all_phrase_occurrences/ap_gp_eng_3_2.csv", ios_base::app);
 
-    // results << "length\toccurences\ttime\n";
+    results << "length\toccurences\ttime\n";
 
     phrases.open("tmp/eng_3_phrases.txt");
     p_len = 0;
 
-    // cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
-    // wea = 1;
-    // while(getline(phrases, phrase))
-    // {
-    //     stringstream s_line(phrase);
-    //     while(getline(s_line, word, '/'))
-    //     {
-    //         p->push_back(stoul(word));
-    //         p_len++;
-    //     }
-
-    //     begin = clock();
-    //     *ans = ap->get_all_phrase_ocurrences(*p);
-    //     end = clock();
-    //     results << p_len << "\t" << ans->second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
-    //     cout << p_len << "\t" << ans->second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
-    //     if(ans->second == 0)
-    //     {
-    //         cout << "Frase " << wea << " no funciona!!!!"<< endl;
-    //         return 1;
-    //     }
-    //     wea++;
-    //     p->clear();
-    //     p_len = 0;
-    // }
-    // phrases.clear();
-    // phrases.seekg(0);
-    // results.close();
+    cout << "Inicia el proceso de Alphabet Partitioning..." << endl;
+    wea = 1;
+    while(getline(phrases, phrase))
+    {
+        stringstream s_line(phrase);
+        while(getline(s_line, word, '/'))
+        {
+            p->push_back(stoul(word));
+            p_len++;
+        }
+        begin = clock();
+        *ans = ap->get_all_phrase_ocurrences(*p);
+        end = clock();
+        results << p_len << "\t" << ans->second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
+        cout << p_len << "\t" << ans->second << "\t" << (float)(end - begin)/CLOCKS_PER_SEC << "\n";
+        if(ans->second == 0)
+        {
+            cout << "Frase " << wea << " no funciona!!!!"<< endl;
+            return 1;
+        }
+        wea++;
+        p->clear();
+        p_len = 0;
+    }
+    phrases.clear();
+    phrases.seekg(0);
+    results.close();
     
-    // cout << "   Experimentacion finalizada!" << endl;
-    // cout << "   Liberando memoria..." << endl;
-    // delete ap;
+    cout << "   Experimentacion finalizada!" << endl;
+    cout << "   Liberando memoria..." << endl;
+    delete ap;
 
-    // cout << "       Terminado!!" << endl;
+    cout << "       Terminado!!" << endl;
 
     cout << "[Simple_II]" << endl;
     sii = new Simple_II("tmp/eng_3_size_9225123.txt");
     cout << "Inicia el proceso de Simple_II..." << endl;
 
-    results.open("results_new/get_all_phrase_occurrences/sii_gp_eng_3.csv");
+    results.open("results_new/get_all_phrase_occurrences/sii_gp_eng_3_2.csv");
     results << "length\toccurences\ttime\n";
     cout << "length\toccurences\ttime\n";
 
@@ -195,7 +194,7 @@ int main(){
         p_len = 0;
         ind++;
         cout << "   Encontrada en " << (float)(end - begin)/CLOCKS_PER_SEC << " segundos con " << ans->second << " ocurrencias" << endl;
-        cout << "   Limpiamos memoria..." << endl;       
+
     }
 
     phrases.close();
